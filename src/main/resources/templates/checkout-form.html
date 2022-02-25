@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout form</title>
+</head>
+<body>
+<form th:action="${'/checkout/create-checkout-session/' + guestId}" method="POST">
+    <button type="submit">Buy Tickets Now</button>
+</form>
+</body>
+</html>

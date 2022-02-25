@@ -1,0 +1,18 @@
+{
+  "properties": [
+    {
+      "name": "APPLICATION_HOST",
+      "type": "java.lang.String",
+      "description": "URL for the application's current host."
+    },
+    {
+      "name": "STRIPE_PK",
+      "type": "java.lang.String",
+      "description": "Public key for Stripe payment processor."
+    },
+    {
+      "name": "STRIPE_SK",
+      "type": "java.lang.String",
+      "description": "Secret key for Stripe payment processor."
+    }
+  ] }
