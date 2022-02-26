@@ -14,7 +14,7 @@
     <name>dining-out</name>
     <description>Event RSVP Application</description>
     <properties>
-        <java.version>8</java.version>
+        <java.version>1.8</java.version>
     </properties>
     <dependencies>
         <dependency>
