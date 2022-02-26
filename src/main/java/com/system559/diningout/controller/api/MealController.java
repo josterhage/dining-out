@@ -64,6 +64,6 @@ public class MealController {
     @DeleteMapping("/delete/{id}")
     public boolean deleteMeal(@PathVariable String id) {
         mealRepository.deleteById(id);
-        return mealRepository.findById(id).isEmpty();
+        return !mealRepository.findById(id).isPresent();
     }
 }

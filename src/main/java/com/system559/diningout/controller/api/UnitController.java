@@ -65,6 +65,6 @@ public class UnitController {
     @DeleteMapping("/delete/{id}")
     public boolean deleteUnit(@PathVariable String id) {
         unitRepository.deleteById(id);
-        return unitRepository.findById(id).isEmpty();
+        return !unitRepository.findById(id).isPresent();
     }
 }

@@ -81,7 +81,7 @@ public class RsvpService {
     public Optional<Guest> confirm(String token) throws TokenExpiredException {
         Optional<Guest> optionalGuest = confirmationService.getGuestFromToken(token);
 
-        if(optionalGuest.isEmpty()) {
+        if(!optionalGuest.isPresent()) {
             return Optional.empty();
         }
 

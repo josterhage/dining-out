@@ -54,7 +54,7 @@ public class CancellationService {
     public boolean confirmToken(String token) throws TokenExpiredException {
         Optional<CancellationToken> optionalToken = tokenRepository.findByToken(token);
 
-        if(optionalToken.isEmpty()) {
+        if(!optionalToken.isPresent()) {
             return false;
         }
 

@@ -52,7 +52,7 @@ public class ConfirmationService {
     public Optional<Guest> getGuestFromToken(String token) throws TokenExpiredException {
         Optional<ConfirmationToken> optionalToken = tokenRepository.findByToken(token);
 
-        if (optionalToken.isEmpty()) {
+        if (!optionalToken.isPresent()) {
             return Optional.empty();
         }
 

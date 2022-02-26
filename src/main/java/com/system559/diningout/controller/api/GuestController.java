@@ -111,6 +111,6 @@ public class GuestController {
     @DeleteMapping("/delete/{id}")
     public boolean deleteGuest(@PathVariable String id) {
         guestRepository.deleteById(id);
-        return guestRepository.findById(id).isEmpty();
+        return !guestRepository.findById(id).isPresent();
     }
 }

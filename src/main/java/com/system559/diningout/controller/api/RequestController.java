@@ -65,6 +65,6 @@ public class RequestController {
     @DeleteMapping("/delete/{id}")
     public boolean deleteRequest(@PathVariable String id) {
         requestRepository.deleteById(id);
-        return requestRepository.findById(id).isEmpty();
+        return !requestRepository.findById(id).isPresent();
     }
 }

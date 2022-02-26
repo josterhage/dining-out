@@ -71,6 +71,6 @@ public class TicketTierController {
     @DeleteMapping("/delete/{id}")
     public boolean deleteTicketTier(@PathVariable String id) {
         ticketTierRepository.deleteById(id);
-        return ticketTierRepository.findById(id).isEmpty();
+        return !ticketTierRepository.findById(id).isPresent();
     }
 }

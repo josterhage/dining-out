@@ -77,6 +77,6 @@ public class TicketController {
     @DeleteMapping("/delete/{id}")
     public boolean deleteTicket(@PathVariable String id) {
         ticketRepository.deleteById(id);
-        return ticketRepository.findById(id).isEmpty();
+        return !ticketRepository.findById(id).isPresent();
     }
 }

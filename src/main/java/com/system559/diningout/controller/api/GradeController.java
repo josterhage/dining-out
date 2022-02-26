@@ -74,6 +74,6 @@ public class GradeController {
     @DeleteMapping("/delete/{id}")
     public boolean deleteGrade(@PathVariable String id) {
         repository.deleteById(id);
-        return repository.findById(id).isEmpty();
+        return !repository.findById(id).isPresent();
     }
 }
