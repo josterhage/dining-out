@@ -10,6 +10,7 @@ import com.system559.diningout.service.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -42,6 +43,15 @@ public class GradeController {
     @PostMapping("/new")
     public Grade newGrade(@RequestBody GradeDto dto) {
         return repository.save(mapper.dtoToGrade(dto));
+    }
+
+    @PostMapping("/bulk-add")
+    public List<Grade> newGrades(@RequestBody List<GradeDto> dtos) {
+        List<Grade> grades = new ArrayList<>();
+        for(GradeDto dto : dtos) {
+            grades.add(repository.save(mapper.dtoToGrade(dto)));
+        }
+        return grades;
     }
 
     @PutMapping("/replace/{id}")

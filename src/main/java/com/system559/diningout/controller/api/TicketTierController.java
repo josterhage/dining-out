@@ -8,6 +8,7 @@ import com.system559.diningout.service.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -37,6 +38,15 @@ public class TicketTierController {
     @PostMapping("/new")
     public TicketTier newTicketTier(@RequestBody TicketTierDto dto) {
         return ticketTierRepository.save(dtoMapper.dtoToTicketTier(dto));
+    }
+
+    @PostMapping("/bulk-add")
+    public List<TicketTier> newTicketTiers(@RequestBody List<TicketTierDto> dtos) {
+        List<TicketTier> ticketTiers = new ArrayList<>();
+        for(TicketTierDto dto : dtos) {
+            ticketTiers.add(ticketTierRepository.save(dtoMapper.dtoToTicketTier(dto)));
+        }
+        return ticketTiers;
     }
 
     @PutMapping("/replace/{id}")

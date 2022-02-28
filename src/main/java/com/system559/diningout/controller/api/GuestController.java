@@ -76,9 +76,6 @@ public class GuestController {
                         .orElseThrow(() -> new RecordNameNotFoundException("Grade",value));
                 update.setGrade(grade);
                 break;
-            case("title"):
-                update.setTitle(value);
-                break;
             case("meal"):
                 Meal meal = mealRepository.findByName(value)
                         .orElseThrow(() -> new RecordNameNotFoundException("Meal",value));

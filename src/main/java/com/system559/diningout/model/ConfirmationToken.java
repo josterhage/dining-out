@@ -14,8 +14,7 @@ public class ConfirmationToken {
     private String token;
     private Long createdDate;
 
-    //TODO: make configurable
-    private final static Long timeToLive = 3600L;
+    private final static Long timeToLive = 900L;
 
     public ConfirmationToken(Guest guest) {
         this.guest = guest;

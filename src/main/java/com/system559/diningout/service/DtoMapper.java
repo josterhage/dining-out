@@ -14,7 +14,7 @@ public class DtoMapper {
     private final GradeRepository gradeRepository;
     private final GuestRepository guestRepository;
     private final MealRepository mealRepository;
-    private final RequestRepository requestRepository;
+    private final SaluteRepository saluteRepository;
     private final TicketRepository ticketRepository;
     private final TicketTierRepository ticketTierRepository;
     private final UnitRepository unitRepository;
@@ -23,14 +23,14 @@ public class DtoMapper {
     public DtoMapper(GradeRepository gradeRepository,
                      GuestRepository guestRepository,
                      MealRepository mealRepository,
-                     RequestRepository requestRepository,
+                     SaluteRepository saluteRepository,
                      TicketRepository ticketRepository,
                      TicketTierRepository ticketTierRepository,
                      UnitRepository unitRepository) {
         this.gradeRepository = gradeRepository;
         this.guestRepository = guestRepository;
         this.mealRepository = mealRepository;
-        this.requestRepository = requestRepository;
+        this.saluteRepository = saluteRepository;
         this.ticketRepository = ticketRepository;
         this.ticketTierRepository = ticketTierRepository;
         this.unitRepository = unitRepository;
@@ -40,7 +40,7 @@ public class DtoMapper {
         return Grade.builder()
                 .name(dto.getName())
                 .tier(ticketTierRepository.findById(dto.getTierId())
-                        .orElseThrow(() -> new RecordNotFoundException("TicketTier","id",dto.getTierId())))
+                        .orElseThrow(() -> new RecordNotFoundException("TicketTier", "id", dto.getTierId())))
                 .build();
     }
 
@@ -49,13 +49,14 @@ public class DtoMapper {
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .grade(gradeRepository.findByName(dto.getGrade())
-                        .orElseThrow(() -> new RecordNotFoundException("Grade","name",dto.getGrade())))
-                .title(dto.getTitle())
+                        .orElseThrow(() -> new RecordNameNotFoundException("Grade", dto.getGrade())))
+                .salute(saluteRepository.findByName(dto.getSalute())
+                        .orElse(null))
                 .meal(mealRepository.findByName(dto.getMeal())
-                        .orElseThrow(() -> new RecordNotFoundException("Meal","name",dto.getMeal())))
+                        .orElseThrow(() -> new RecordNameNotFoundException("Meal", dto.getMeal())))
                 .requestText(dto.getRequestText())
                 .unit(unitRepository.findByName(dto.getUnit())
-                        .orElseThrow(() -> new RecordNotFoundException("Unit","name",dto.getUnit())))
+                        .orElseThrow(() -> new RecordNameNotFoundException("Unit", dto.getUnit())))
                 .email(dto.getEmail())
                 .partner(guestRepository.findById(dto.getPartnerId()).orElse(null))
                 .isConfirmed(dto.isConfirmed())
@@ -76,12 +77,16 @@ public class DtoMapper {
                 .build();
     }
 
+    public Salute dtoToSalute(SaluteDto dto) {
+        return Salute.builder().name(dto.getName()).build();
+    }
+
     public Ticket dtoToTicket(TicketDto dto) {
         return Ticket.builder()
                 .guest(guestRepository.findById(dto.getGuestId())
                         .orElseThrow(() -> new RecordIdNotFoundException("Guest", dto.getGuestId())))
                 .tier(ticketTierRepository.findById(dto.getTierId())
-                        .orElseThrow(() -> new RecordIdNotFoundException("TicketTier",dto.getTierId())))
+                        .orElseThrow(() -> new RecordIdNotFoundException("TicketTier", dto.getTierId())))
                 .chargeId(dto.getChargeId())
                 .build();
     }

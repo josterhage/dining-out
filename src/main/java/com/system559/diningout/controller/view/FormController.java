@@ -2,9 +2,11 @@ package com.system559.diningout.controller.view;
 
 import com.system559.diningout.model.Grade;
 import com.system559.diningout.model.Meal;
+import com.system559.diningout.model.Salute;
 import com.system559.diningout.model.Unit;
 import com.system559.diningout.repository.GradeRepository;
 import com.system559.diningout.repository.MealRepository;
+import com.system559.diningout.repository.SaluteRepository;
 import com.system559.diningout.repository.UnitRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,20 +22,24 @@ public class FormController {
     private final UnitRepository unitRepository;
     private final GradeRepository gradeRepository;
     private final MealRepository mealRepository;
+    private final SaluteRepository saluteRepository;
 
     public FormController(UnitRepository unitRepository,
                           GradeRepository gradeRepository,
-                          MealRepository mealRepository) {
-        this.unitRepository=unitRepository;
-        this.gradeRepository=gradeRepository;
-        this.mealRepository=mealRepository;
+                          MealRepository mealRepository,
+                          SaluteRepository saluteRepository) {
+        this.unitRepository = unitRepository;
+        this.gradeRepository = gradeRepository;
+        this.mealRepository = mealRepository;
+        this.saluteRepository = saluteRepository;
     }
 
     @GetMapping("/rsvp-form")
     public String getRsvpForm(Model model) {
-        model.addAttribute("units",unitRepository.findAll().stream().map(Unit::getName).collect(Collectors.toList()));
-        model.addAttribute("grades",gradeRepository.findAll().stream().map(Grade::getName).collect(Collectors.toList()));
-        model.addAttribute("meals",mealRepository.findAll().stream().map(Meal::getName).collect(Collectors.toList()));
+        model.addAttribute("units", unitRepository.findAll().stream().map(Unit::getName).collect(Collectors.toList()));
+        model.addAttribute("grades", gradeRepository.findAll().stream().map(Grade::getName).collect(Collectors.toList()));
+        model.addAttribute("meals", mealRepository.findAll().stream().map(Meal::getName).collect(Collectors.toList()));
+        model.addAttribute("salutes", saluteRepository.findAll().stream().map(Salute::getName).collect(Collectors.toList()));
         return "rsvp-form";
     }
 }

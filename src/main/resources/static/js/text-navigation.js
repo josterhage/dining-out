@@ -1,49 +1,90 @@
-$(document).ready(function() {
-    $('#main-home').css('display','flex');
+function TextNavigator(baseUrl) {
+    const viewUrl = baseUrl + '/view/';
 
-    $('#nav-home').on('click',function() {
-        if($('#main-home').css('display') !== 'flex') {
-            $('.body-text').css('display','none');
-            $('#main-home').css('display','flex');
-            if(typeof(slideShow.resume === 'function')) {
-                slideShow.resume();
-            }
+    let lastClicked;
+
+    $(document).ready(async function () {
+        $('#nav-home').on('click',onHomeClick);
+        $('#nav-sequence').on('click',onSequenceClick);
+        $('#nav-menu').on('click',onMenuClick);
+        $('#nav-location').on('click',onLocationClick);
+        $('#nav-dress').on('click',onDressClick);
+
+        $('main').html(await getView('home'));
+        lastClicked = 'home';
+    });
+
+    async function onHomeClick(e){
+        $('main').html(await getView('home'));
+        updateClicks();
+        $('nav-home').off('click',onHomeClick);
+        lastClicked = 'home';
+    }
+
+    async function onSequenceClick(e) {
+        $('main').html(await getView('sequence'));
+        updateClicks();
+        $('nav-home').off('click',onSequenceClick);
+        lastClicked = 'home';
+    }
+
+    async function onMenuClick(e) {
+        $('main').html(await getView('menu'));
+        updateClicks();
+        $('nav-menu').off('click',onMenuClick);
+        lastClicked = 'home';
+    }
+
+    async function onLocationClick(e) {
+        $('main').html(await getView('location'));
+        updateClicks();
+        $('nav-location').off('click',onLocationClick);
+        lastClicked = 'home';
+    }
+
+    async function onDressClick(e) {
+        $('main').html(await getView('dress'));
+        updateClicks();
+        $('nav-dress').off('click',onDressClick);
+        lastClicked = 'home';
+    }
+
+    function updateClicks() {
+        switch(lastClicked){
+            case 'home':
+                $('#nav-home').on('click',onHomeClick);
+                break;
+            case 'sequence':
+                $('#nav-sequence').on('click',onSequenceClick);
+                break;
+            case 'menu':
+                $('#nav-menu').on('click',onMenuClick);
+                break;
+            case 'location':
+                $('#nav-location').on('click',onLocationClick);
+                break;
+            case 'dress':
+                $('#nav-dress').on('click',onDressClick);
+                break;
         }
-    })
-    $('#nav-sequence').on('click',function() {
-        if($('#main-sequence').css('display') !== 'flex') {
-            $('.body-text').css('display','none');
-            $('#main-sequence').css('display','flex');
-            if(typeof(slideShow.halt === 'function')) {
-                slideShow.halt();
-            }
-        }
-    })    
-    $('#nav-menu').on('click',function() {
-        if($('#main-menu').css('display') !== 'flex') {
-            $('.body-text').css('display','none');
-            $('#main-menu').css('display','flex');
-            if(typeof(slideShow.halt === 'function')) {
-                slideShow.halt();
-            }
-        }
-    })
-    $('#nav-location').on('click',function() {
-        if($('#main-location').css('display') !== 'flex') {
-            $('.body-text').css('display','none');
-            $('#main-location').css('display','flex');
-            if(typeof(slideShow.halt === 'function')) {
-                slideShow.halt();
-            }
-        }
-    })
-    $('#nav-dress').on('click',function() {
-        if($('#main-dress').css('display') !== 'flex') {
-            $('.body-text').css('display','none');
-            $('#main-dress').css('display','flex');
-            if(typeof(slideShow.halt === 'function')) {
-                slideShow.halt();
-            }
-        }
-    })
-})
+    }
+
+    function onBuyClick(e) {
+        // ???
+    }
+
+    this.getView = async function(viewName) {
+        return getView(viewName);
+    }
+
+    async function getView(viewName) {
+        const requestUrl = viewUrl + viewName;
+
+        let data = await Promise.resolve($.ajax({
+            url: requestUrl,
+            type: 'get'
+        }));
+
+        return $('<div></div>').html($(data)).find(`#main-${viewName}`);
+    }
+}

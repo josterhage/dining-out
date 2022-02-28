@@ -16,7 +16,7 @@ public class Guest {
     private String firstName;
     private String lastName;
     private Grade grade;
-    private String title;
+    private Salute salute;
     private Meal meal;
     private String requestText;
     private Unit unit;

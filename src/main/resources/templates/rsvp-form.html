@@ -3,106 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link href="/css/global-styles.css" rel="stylesheet">
 </head>
 <body>
-<div class="form-body hidden" id="rsvpFormContainer">
+<div class="form-body" id="rsvpFormContainer">
     <div class="form-box">
         <h3 class="safari-flex-fix">RSVP</h3>
         <button class="btn btn-form-close" id="getTicketsFormClose">
             <i class="fa-solid fa-times"></i>
         </button>
-        <form id="rsvpForm">
-            <input type="hidden" id="rsvpCsrfHeader" th:value="${_csrf.headerName}">
-            <input type="hidden" id="rsvpCsrfToken" th:value="${_csrf.token}">
-            <div class="flex-row">
-                <div class="flex-col">
-                    <label for="guestCount">Attending</label>
-                    <select id="guestCount">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                    </select>
+        <div id="formHolder">
+            <form id="rsvpForm">
+                <input type="hidden" id="rsvpCsrfHeader" th:value="${_csrf.headerName}">
+                <input type="hidden" id="rsvpCsrfToken" th:value="${_csrf.token}">
+                <div class="flex-row">
+                    <div class="flex-col">
+                        <label for="guestCount">How many guests are you reserving for?</label>
+                        <select id="guestCount">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </div>
+                    <div class="flex-col">
+                        <label for="unit">Which unit are you with?</label>
+                        <select id="unit">
+                            <option value="" selected disabled hidden>Select a unit</option>
+                            <option th:each="unit : ${units}" th:value="${unit}" th:text="${unit}"></option>
+                        </select>
+                        <span id="unitValidation" class="validation-spacer">You must select a unit</span>
+                    </div>
                 </div>
-            </div>
-            <div class="flex-row">
-                <div class="flex-col">
-                    <label for="unit">Unit:</label>
-                    <select id="unit">
-                        <option th:each="unit : ${units}" th:value="${unit}" th:text="${unit}"></option>
-                    </select>
+                <div class="flex-row">
+                    <div class="flex-col">
+                        <label for="guestEmail">What is your email address?</label>
+                        <input type="email" id="guestEmail">
+                        <span id="emailValidation" class="validation-spacer">You must enter an email address</span>
+                    </div>
                 </div>
-            </div>
-            <div class="half-spacer"></div>
-            <div class="text-md" style="font-weight:bold;">First guest:</div>
-            <div class="half-spacer"></div>
-            <div class="flex-row">
-                <div class="flex-col">
-                    <label for="guest1Grade">Grade or Title:</label>
-                    <select id="guest1Grade">
-                        <option th:each="grade:${grades}" th:value="${grade}" th:text="${grade}"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex-row">
-                <div class="flex-col">
-                    <label for="guest1firstName">First Name:</label>
-                    <input type="text" id="guest1firstName">
-                </div>
-                <div class="flex-col">
-                    <label for="guest1lastName">Last Name:</label>
-                    <input type="text" id="guest1lastName">
-                </div>
-            </div>
-            <div class="flex-row">
-                <div class="flex-col">
-                    <label for="guest1meal">Meal:</label>
-                    <select id="guest1meal">
-                        <option th:each="meal:${meals}" th:value="${meal}" th:text="${meal}">Steak</option>
-                    </select>
-                </div>
-                <div class="flex-col">
-                    <label for="guest1request">Special requests:</label>
-                    <textarea id="guest1request" cols="20" rows="5"></textarea>
-                </div>
-            </div>
-            <div id="secondGuestContainer" class="hidden">
-                <input type="hidden" id="secondGuest" value="no">
                 <div class="half-spacer"></div>
                 <div class="text-md" style="font-weight:bold;">First guest:</div>
                 <div class="half-spacer"></div>
-                <div class="flex-row">
+                <div class="flex-row mb-sm">
                     <div class="flex-col">
-                        <label for="guest2Grade">Grade or Title:</label>
-                        <select id="guest2Grade">
+                        <label for="guest1grade">Grade or Title: <br/>
+                            <span class="text-sm">(DA Civilians please choose your WG or GS Grade)</span>
+                        </label>
+                        <select id="guest1grade">
+                            <option value="" selected disabled hidden>Select a grade</option>
                             <option th:each="grade:${grades}" th:value="${grade}" th:text="${grade}"></option>
                         </select>
+                        <span id="guest1gradeValidation"
+                              class="validation-spacer">You must select a grade or title</span>
                     </div>
-                </div>
-                <div class="flex-row">
-                    <div class="flex-col">
-                        <label for="guest2firstName">First Name:</label>
-                        <input type="text" id="guest2firstName">
-                    </div>
-                    <div class="flex-col">
-                        <label for="guest2lastName">Last Name:</label>
-                        <input type="text" id="guest2lastName">
-                    </div>
-                </div>
-                <div class="flex-row">
-                    <div class="flex-col">
-                        <label for="guest2meal">Meal:</label>
-                        <select id="guest2meal">
-                            <option th:each="meal:${meals}" th:value="${meal}" th:text="${meal}">Steak</option>
+                    <div class="flex-col hidden" id="saluteBox1">
+                        <label for="guest1salute">Civilian title:</label>
+                        <select id="guest1salute">
+                            <option value="" selected hidden>Select a civilian title:</option>
+                            <option th:each="salute:${salutes}" th:value="${salute}" th:text="${salute}"></option>
                         </select>
                     </div>
+                </div>
+                <div class="flex-row mb-sm">
                     <div class="flex-col">
-                        <label for="guest2request">Special requests:</label>
-                        <textarea id="guest2request" cols="20" rows="5"></textarea>
+                        <label for="guest1firstName">First Name:</label>
+                        <input type="text" id="guest1firstName">
+                        <span id="guest1firstNameValidation"
+                              class="validation-spacer">You must enter a first name</span>
+                    </div>
+                    <div class="flex-col">
+                        <label for="guest1lastName">Last Name:</label>
+                        <input type="text" id="guest1lastName">
+                        <span id="guest1lastNameValidation" class="validation-spacer">You must enter a last name</span>
                     </div>
                 </div>
-            </div>
-            <button type="submit" id="rsvpSubmit">Submit</button>
-            <button type="reset" id="rsvpReset">Reset</button>
-        </form>
+                <div class="flex-row">
+                    <div class="flex-col">
+                        <label for="guest1meal">Meal:</label>
+                        <select id="guest1meal">
+                            <option value="" selected disabled hidden>Select a meal</option>
+                            <option th:each="meal:${meals}" th:value="${meal}" th:text="${meal}">Steak</option>
+                        </select>
+                        <span id="guest1mealValidation" class="validation-spacer">You must select a meal</span>
+                    </div>
+                    <div class="flex-col">
+                        <label for="guest1request">Special requests:</label>
+                        <textarea id="guest1request" cols="20" rows="5"></textarea>
+                    </div>
+                </div>
+                <div id="secondGuestContainer" class="hidden">
+                    <input type="hidden" id="secondGuest" value="no">
+                    <div class="half-spacer"></div>
+                    <div class="text-md" style="font-weight:bold;">Second guest:</div>
+                    <div class="half-spacer"></div>
+                    <div class="flex-row">
+                        <div class="flex-col">
+                            <label for="guest2grade">Grade or Title: <br/>
+                                <span class="text-sm">(DA Civilians please choose your WG or GS Grade)</span>
+                            </label>
+                            <select id="guest2grade">
+                                <option value="" selected disabled hidden>Select a grade or title</option>
+                                <option th:each="grade:${grades}" th:value="${grade}" th:text="${grade}"></option>
+                            </select>
+                            <span id="guest2GradeValidation"
+                                  class="validation-spacer">You must select a grade or title</span>
+                        </div>
+                        <div class="flex-col hidden" id="saluteBox2">
+                            <label for="guest2salute">Civilian title:</label>
+                            <select id="guest2salute">
+                                <option value="" selected hidden>Select a civilian title:</option>
+                                <option th:each="salute:${salutes}" th:value="${salute}" th:text="${salute}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex-row">
+                        <div class="flex-col">
+                            <label for="guest2firstName">First Name:</label>
+                            <input type="text" id="guest2firstName">
+                            <span id="guest2firstNameValidation"
+                                  class="validation-spacer">You must enter a first name</span>
+                        </div>
+                        <div class="flex-col">
+                            <label for="guest2lastName">Last Name:</label>
+                            <input type="text" id="guest2lastName">
+                            <span id="guest2lastNameValidation"
+                                  class="validation-spacer">You must enter a last name</span>
+                        </div>
+                    </div>
+                    <div class="flex-row">
+                        <div class="flex-col">
+                            <label for="guest2meal">Meal:</label>
+                            <select id="guest2meal">
+                                <option value="" selected disabled hidden>Select a meal</option>
+                                <option th:each="meal:${meals}" th:value="${meal}" th:text="${meal}">Steak</option>
+                            </select>
+                            <span id="guest2mealValidation" class="validation-spacer">You must select a meal</span>
+                        </div>
+                        <div class="flex-col">
+                            <label for="guest2request">Special requests:</label>
+                            <textarea id="guest2request" cols="20" rows="5"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" id="rsvpSubmit" class="btn btn-rsvp btn-rsvp-submit">Submit</button>
+                <button type="reset" id="rsvpReset" class="btn btn-rsvp btn-rsvp-reset">Reset</button>
+            </form>
+        </div>
     </div>
 </div>
 </body>

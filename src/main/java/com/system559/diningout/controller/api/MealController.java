@@ -8,6 +8,7 @@ import com.system559.diningout.service.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -37,6 +38,15 @@ public class MealController {
     @PostMapping("/new")
     public Meal newMeal(@RequestBody MealDto dto) {
         return mealRepository.save(dtoMapper.dtoToMeal(dto));
+    }
+
+    @PostMapping("/bulk-add")
+    public List<Meal> newMeals(@RequestBody List<MealDto> dtos) {
+        List<Meal> meals = new ArrayList<>();
+        for(MealDto dto : dtos) {
+            meals.add(mealRepository.save(dtoMapper.dtoToMeal(dto)));
+        }
+        return meals;
     }
 
     @PutMapping("/replace/{id}")
