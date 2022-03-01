@@ -2,6 +2,7 @@ function TextNavigator(baseUrl) {
     const viewUrl = baseUrl + '/view/';
 
     let lastClicked;
+    let sequenceNavigation;
 
     $(document).ready(async function () {
         $('#nav-home').on('click',onHomeClick);
@@ -26,6 +27,7 @@ function TextNavigator(baseUrl) {
         updateClicks();
         $('nav-home').off('click',onSequenceClick);
         lastClicked = 'home';
+        sequenceNavigation = new SequenceNavigator();
     }
 
     async function onMenuClick(e) {

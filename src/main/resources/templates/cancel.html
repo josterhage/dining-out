@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="appHost" th:content="${appHost}">
+
+    <link href="/images/111th_MI_BDE_Patch.svg" rel="icon">
+
+    <link href="/css/global-styles.css" rel="stylesheet">
+    <link href="/css/dining-out-styles.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/b48c69fef3.js" crossorigin="anonymous"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <title>111th MI BDE Dining Out - 04.01.2022</title>
+</head>
+
+<body>
+<div class="darkener"></div>
+<header>
+    <div class="navbar">
+        <ul class="navbar collapsable">
+            <li>
+                <button class="btn btn-hollow" id="nav-home">Home</button>
+            </li>
+            <li>
+                <button class="btn btn-hollow" id="nav-sequence">Sequence of Events</button>
+            </li>
+            <li>
+                <button class="btn btn-hollow" id="nav-menu">Menu</button>
+            </li>
+            <li>
+                <button class="btn btn-hollow" id="nav-location">Location</button>
+            </li>
+            <li>
+                <button class="btn btn-hollow" id="nav-dress">Dress Code</button>
+            </li>
+        </ul>
+
+        <button class="btn btn-primary" id="getTicketsButton">RSVP/Buy Tickets</button>
+        <!--            <button class="btn btn-primary" id="donateButton">Donate</button>-->
+    </div>
+</header>
+
+<div class="body-wrapper">
+    <main>
+    </main>
+
+    <footer>
+    </footer>
+
+    <div class="loader-frame hidden">
+        <div class="loader"></div>
+    </div>
+</div>
+
+<div class="form-body">
+    <div class="form-box">
+        <h3 class="safari-flex-fix">Cancellation</h3>
+        <div class="flex-row text-med">We're sorry to hear that you wish to cancel your reservation. If you're certain that's what you want, click the button below to confirm.</div>
+        <form th:action="${appHost + '/cancel/confirmed/' + token}" method="post">
+        <button class="btn btn-rsvp btn-rsvp-submit">Confirm</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

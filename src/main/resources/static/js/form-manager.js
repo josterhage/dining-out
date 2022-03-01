@@ -210,9 +210,12 @@ function CheckoutForm(checkout, appHost, csrf) {
 
     let closeTime = 5;
     let intervalId;
-    const price = (checkout['tier']['price'] * checkout['quantity']);
-    const fee = (price * .029) + 30;
-    const total = price + fee;
+    const price = (checkout['tierPrice'] * checkout['quantity']);
+    const total = price + checkout['fee'];
+
+    const priceStr = (checkout['tierPrice'] * checkout['quantity'] / 100).toFixed(2);
+    const feeStr = (checkout['fee'] / 100).toFixed(2);
+    const totalStr = total.toFixed(2);
 
     const askAboutPurchase = `
     <div class="flex-row">
@@ -240,8 +243,8 @@ function CheckoutForm(checkout, appHost, csrf) {
         </div>        
     </div>
     <div class="flex-row">
-        <button id="purchaseButton" class="btn btn-rsvp btn-rsvp-submit">Yes</button>
-        <button id="continueButton" class="btn btn-rsvp btn-rsvp-submit">No</button>
+        <button id="purchaseButton" class="btn btn-rsvp btn-rsvp-submit">Pay now</button>
+        <button id="continueButton" class="btn btn-rsvp btn-rsvp-reset">Cancel</button>
     </div>
     `;
 
@@ -270,13 +273,12 @@ function CheckoutForm(checkout, appHost, csrf) {
     `;
 
     this.init = function () {
-        console.log('hello there');
         $formDiv.html(askAboutPurchase);
         $('#checkoutQty').html(checkout['quantity']);
-        $('#checkoutTierName').html(checkout['tier']['name']);
-        $('#checkoutPrice').html(`\$${checkout['tier']['price'] / 100}`);
-        $('#serviceFee').html(`\$${fee / 100}`);
-        $('#checkoutSum').html(`\$${total / 100}`);
+        $('#checkoutTierName').html(checkout['tierName']);
+        $('#checkoutPrice').html(`\$${priceStr}`);
+        $('#serviceFee').html(`\$${feeStr}`);
+        $('#checkoutSum').html(`\$${totalStr}`);
         $('#purchaseButton').on('click', purchaseClicked);
         $('#continueButton').on('click', continueClicked);
     }
@@ -291,17 +293,17 @@ function CheckoutForm(checkout, appHost, csrf) {
         stripe = new Stripe(pk);
         $('#submit').on('click', handleSubmit);
 
-        const response = await Promise.resolve($.ajax({
-            url: createIntentPath + checkout['token'],
-            type: 'post',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader(csrf['header'], csrf['token']);
-            }
-        }));
+        // const response = await Promise.resolve($.ajax({
+        //     url: createIntentPath + checkout['token'],
+        //     type: 'post',
+        //     beforeSend: function (xhr) {
+        //         xhr.setRequestHeader(csrf['header'], csrf['token']);
+        //     }
+        // }));
 
         elements = stripe.elements({
             appearance: {theme: 'stripe'},
-            clientSecret: response
+            clientSecret: checkout['clientSecret']
         });
 
         const paymentElement = elements.create("payment");

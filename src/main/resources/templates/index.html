@@ -79,11 +79,6 @@
     let slideShow = new SlideShow(['images/263303036_265475378946822_6199204000457916659_n.jpg', 'images/111th_MI_BDE_Patch.svg'], 5);
     let textNavigator = new TextNavigator(host);
     let formManager = new FormManager(host);
-
-
-    alert("This site is not ready to accept RSVPs or payments. Do not enter any PII or payment information, its security cannot be guaranteed.");
-
-
 </script>
 
 <script th:if="${paymentSuccess}" th:inline="javascript">
@@ -116,8 +111,7 @@
         intervalId = setInterval(countDown, 1000);
 
         $('#getTicketsFormClose').on('click', function () {
-            $('#getTicketsFormHolder').empty();
-            clearInterval(intervalId);
+            window.location = 'https://111th-dining-out.system559.com';
         })
 
     })
@@ -161,8 +155,7 @@
         intervalId = setInterval(countDown, 1000);
 
         $('#getTicketsFormClose').on('click', function () {
-            $('#getTicketsFormHolder').empty();
-            clearInterval(intervalId);
+           window.location = 'https://111th-dining-out.system559.com';
         })
     })
 

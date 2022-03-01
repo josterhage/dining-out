@@ -23,8 +23,10 @@ public class CheckoutViewController {
     }
 
     @GetMapping("/success")
-    public String success(Model model, @RequestParam(name="payment_intent_client_secret") String clientSecret) {
-        Guest guest = checkoutService.confirmPayment(clientSecret);
+    public String success(Model model,
+                          @RequestParam(name="payment_intent") String paymentIntent,
+                          @RequestParam(name="payment_intent_client_secret") String clientSecret) {
+        Guest guest = checkoutService.confirmPayment(paymentIntent,clientSecret);
         model.addAttribute("paymentSuccess",true);
         model.addAttribute("grade",guest.getGrade().getName());
         model.addAttribute("firstName",guest.getFirstName());

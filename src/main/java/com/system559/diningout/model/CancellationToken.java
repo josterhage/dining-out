@@ -1,7 +1,9 @@
 package com.system559.diningout.model;
 
+import com.system559.diningout.controller.cancel.CancelController;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.util.UUID;
 
@@ -9,18 +11,12 @@ import java.util.UUID;
 public class CancellationToken {
     @Id
     private String id;
-
-    private Guest guest;
+    @Indexed(unique = true)
     private String token;
-    private Long createdDate;
+    private Ticket ticket;
 
-    private final static Long timeToLive = 3600L;
-
-    public CancellationToken(Guest guest) {
-        this.guest = guest;
-        createdDate = System.currentTimeMillis();
+    public CancellationToken(Ticket ticket) {
+        this.ticket = ticket;
         token = UUID.randomUUID().toString();
     }
-
-    public boolean isExpired() {return System.currentTimeMillis() - createdDate > timeToLive;}
 }

@@ -7,15 +7,12 @@ import com.system559.diningout.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Collectors;
-
 @Service("dtoMapperService")
 public class DtoMapper {
     private final GradeRepository gradeRepository;
     private final GuestRepository guestRepository;
     private final MealRepository mealRepository;
     private final SaluteRepository saluteRepository;
-    private final TicketRepository ticketRepository;
     private final TicketTierRepository ticketTierRepository;
     private final UnitRepository unitRepository;
 
@@ -24,14 +21,12 @@ public class DtoMapper {
                      GuestRepository guestRepository,
                      MealRepository mealRepository,
                      SaluteRepository saluteRepository,
-                     TicketRepository ticketRepository,
                      TicketTierRepository ticketTierRepository,
                      UnitRepository unitRepository) {
         this.gradeRepository = gradeRepository;
         this.guestRepository = guestRepository;
         this.mealRepository = mealRepository;
         this.saluteRepository = saluteRepository;
-        this.ticketRepository = ticketRepository;
         this.ticketTierRepository = ticketTierRepository;
         this.unitRepository = unitRepository;
     }
@@ -85,9 +80,6 @@ public class DtoMapper {
         return Ticket.builder()
                 .guest(guestRepository.findById(dto.getGuestId())
                         .orElseThrow(() -> new RecordIdNotFoundException("Guest", dto.getGuestId())))
-                .tier(ticketTierRepository.findById(dto.getTierId())
-                        .orElseThrow(() -> new RecordIdNotFoundException("TicketTier", dto.getTierId())))
-                .chargeId(dto.getChargeId())
                 .build();
     }
 

@@ -1,7 +1,3 @@
-$(document).ready(function () {
-    sequenceNavigator = new SequenceNavigator();
-});
-
 function SequenceNavigator() {
     let sequenceIcons = [
         '#cocktailIcon',

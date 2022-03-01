@@ -1,11 +1,16 @@
 package com.system559.diningout.dto;
 
 import com.system559.diningout.model.TicketTier;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class CheckoutDto {
-    private TicketTier tier;
+    private String clientSecret;
+    private String tierName;
+    private long tierPrice;
     private long quantity;
-    private String token;
+    private long fee;
+    private long created;
 }

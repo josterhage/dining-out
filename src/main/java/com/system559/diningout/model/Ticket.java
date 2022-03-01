@@ -13,6 +13,6 @@ public class Ticket {
 
     @Indexed(unique = true)
     private Guest guest;
-    private TicketTier tier;
-    private String chargeId;
+    @Indexed(unique = true)
+    private String paymentIntent;
 }

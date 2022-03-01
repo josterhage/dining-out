@@ -10,5 +10,5 @@ import java.util.Optional;
 
 public interface TicketRepository extends MongoRepository<Ticket, String> {
     Optional<Ticket> findByGuest(Guest guest);
-    List<Ticket> findByTier(TicketTier tier);
+    Optional<Ticket> findByPaymentIntent(String paymentIntent);
 }

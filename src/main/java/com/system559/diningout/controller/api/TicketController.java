@@ -24,7 +24,7 @@ public class TicketController {
     public TicketController(DtoMapper dtoMapper,
                             GuestRepository guestRepository,
                             TicketRepository ticketRepository,
-                            TicketTierRepository ticketTierRepository){
+                            TicketTierRepository ticketTierRepository) {
         this.dtoMapper = dtoMapper;
         this.guestRepository = guestRepository;
         this.ticketRepository = ticketRepository;
@@ -39,7 +39,7 @@ public class TicketController {
     @GetMapping("/{id}")
     public Ticket getById(@PathVariable String id) {
         return ticketRepository.findById(id)
-                .orElseThrow(() -> new RecordIdNotFoundException("Ticket",id));
+                .orElseThrow(() -> new RecordIdNotFoundException("Ticket", id));
     }
 
     @PostMapping("/new")
@@ -54,23 +54,12 @@ public class TicketController {
         return ticketRepository.save(replacement);
     }
 
-    @PatchMapping("/update/{id}/{field}/{value}")
-    public Ticket updateTicket(@PathVariable String id, @PathVariable String field, @PathVariable String value) {
+    @PatchMapping("/update/{id}/guest/{value}")
+    public Ticket updateTicket(@PathVariable String id, @PathVariable String value) {
         Ticket update = ticketRepository.findById(id)
-                .orElseThrow(() -> new RecordIdNotFoundException("Ticket",id));
-        switch(field) {
-            case("guest"):
-                update.setGuest(guestRepository.findById(value)
-                        .orElseThrow(() -> new RecordIdNotFoundException("Guest",value)));
-                break;
-            case("tier"):
-                update.setTier(ticketTierRepository.findById(value)
-                        .orElseThrow(() -> new RecordIdNotFoundException("TicketTier",value)));
-                break;
-            case("chargeId"):
-                update.setChargeId(value);
-                break;
-        }
+                .orElseThrow(() -> new RecordIdNotFoundException("Ticket", id));
+        update.setGuest(guestRepository.findById(value)
+                .orElseThrow(() -> new RecordIdNotFoundException("Guest", value)));
         return ticketRepository.save(update);
     }
 

@@ -4,51 +4,41 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import com.system559.diningout.model.Guest;
+import com.system559.diningout.model.Ticket;
 import com.system559.diningout.model.TicketTier;
+import com.system559.diningout.repository.CancellationTokenRepository;
+import com.system559.diningout.repository.TicketRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service("ticketService")
-@Transactional
 public class TicketService {
-    @Value("${APPLICATION_HOST}")
-    private String appHost;
-    @Value("${STRIPE_SK}")
-    private String stripeSk;
+    private final TicketRepository ticketRepository;
 
-    SessionCreateParams.LineItem.PriceData createPriceData(TicketTier tier) {
-        return SessionCreateParams.LineItem.PriceData.builder()
-                .setCurrency("usd")
-                .setUnitAmount(tier.getPrice())
-                .setProductData(
-                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                .setName(tier.getName())
-                                .build())
-                .build();
+    @Autowired
+    public TicketService(TicketRepository ticketRepository){
+        this.ticketRepository = ticketRepository;
     }
 
-    SessionCreateParams.LineItem createSessionLineItem(TicketTier tier, int quantity) {
-        return SessionCreateParams.LineItem.builder()
-                .setPriceData(createPriceData(tier))
-                .setQuantity((long)quantity)
-                .build();
-    }
-
-    public Session createSession(TicketTier tier, int quantity) throws StripeException {
-        String successUrl = appHost + "/checkout/success";
-        String failedUrl = appHost + "/checkout/failed";
-
-        Stripe.apiKey = stripeSk;
-
-        SessionCreateParams params = SessionCreateParams.builder()
-                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
-                .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setCancelUrl(failedUrl)
-                .addLineItem(createSessionLineItem(tier,quantity))
-                .setSuccessUrl(successUrl)
+    public Ticket createTicket(Guest guest, String paymentIntent) {
+        Ticket primary = Ticket.builder()
+                .guest(guest)
+                .paymentIntent(paymentIntent)
                 .build();
 
-        return Session.create(params);
+        if(!Objects.isNull(guest.getPartner())){
+            Ticket secondary = Ticket.builder()
+                    .guest(guest.getPartner())
+                    .paymentIntent(paymentIntent)
+                    .build();
+            ticketRepository.save(secondary);
+        }
+
+        return ticketRepository.save(primary);
     }
 }

@@ -1,5 +1,6 @@
 package com.system559.diningout.service;
 
+import com.stripe.exception.StripeException;
 import com.system559.diningout.dto.CheckoutDto;
 import com.system559.diningout.dto.GuestDto;
 import com.system559.diningout.exception.*;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @Service("rsvpService")
 public class RsvpService {
     private final CancellationService cancellationService;
+    private final CheckoutService checkoutService;
     private final ConfirmationService confirmationService;
     private final DtoMapper dtoMapper;
     private final GuestRepository guestRepository;
@@ -27,6 +29,7 @@ public class RsvpService {
 
     @Autowired
     public RsvpService(CancellationService cancellationService,
+                       CheckoutService checkoutService,
                        ConfirmationService confirmationService,
                        DtoMapper dtoMapper,
                        GuestRepository guestRepository,
@@ -35,6 +38,7 @@ public class RsvpService {
                        GradeRepository gradeRepository,
                        UnitRepository unitRepository) {
         this.cancellationService = cancellationService;
+        this.checkoutService = checkoutService;
         this.confirmationService = confirmationService;
         this.dtoMapper = dtoMapper;
         this.guestRepository = guestRepository;
@@ -44,7 +48,7 @@ public class RsvpService {
         this.unitRepository = unitRepository;
     }
 
-    public CheckoutDto startRsvp(List<GuestDto> guests) {
+    public CheckoutDto startRsvp(List<GuestDto> guests) throws StripeException {
         Guest primary = createRsvp(guests.get(0));
         if(guests.size() == 2) {
             guests.get(1).setPartnerId(primary.getId());
@@ -53,15 +57,15 @@ public class RsvpService {
             primary = guestRepository.save(primary);
         }
 
-        CheckoutDto checkout = new CheckoutDto();
+//        CheckoutDto checkout = new CheckoutDto();
+//
+//        TicketTier tier = guests.size() == 2 ? getTopTier(guests) : primary.getGrade().getTier();
 
-        TicketTier tier = guests.size() == 2 ? getTopTier(guests) : primary.getGrade().getTier();
+//        checkout.setTier(tier);
+//        checkout.setQuantity(guests.size());
+//        checkout.setToken(confirmationService.createToken(primary));
 
-        checkout.setTier(tier);
-        checkout.setQuantity(guests.size());
-        checkout.setToken(confirmationService.createToken(primary));
-
-        return checkout;
+        return checkoutService.getPaymentIntent(primary);
     }
 
     public Guest createRsvp(GuestDto dto)

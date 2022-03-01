@@ -1,5 +1,6 @@
 package com.system559.diningout.controller.rsvp;
 
+import com.stripe.exception.StripeException;
 import com.system559.diningout.dto.CheckoutDto;
 import com.system559.diningout.dto.GuestDto;
 import com.system559.diningout.service.RsvpService;
@@ -22,7 +23,7 @@ public class RsvpController {
     }
 
     @PostMapping("/start")
-    public CheckoutDto startRsvp(@RequestBody List<GuestDto> guests) {
+    public CheckoutDto startRsvp(@RequestBody List<GuestDto> guests) throws StripeException {
         return rsvpService.startRsvp(guests);
     }
 }

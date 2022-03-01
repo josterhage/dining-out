@@ -94,28 +94,7 @@ svg .st2 {
     fill: none;
 }
 
-@media screen and (min-width: 1024px) {
-    /* .sequence-frame .line {
-        width:75px;
-    } */
-}
-
-@media screen and (min-width: 768px) and (max-width: 1023px) {
-    /*     
-    .sequence-frame .line {
-        width:50px;
-    } */
-}
-
-@media screen and (min-width:768px) {
-
-}
-
 @media screen and (max-width: 767px) {
-
-    /* .sequence-frame .line {
-        width:0px;
-    } */
     .description-box {
         padding-top: 3rem !important;
     }
@@ -128,14 +107,14 @@ svg .st2 {
     }
 
     to {
-        margin-left: 0%;
+        margin-left: 0;
         width: 100%;
     }
 }
 
 @keyframes slide-out {
     from {
-        margin-left: 0%;
+        margin-left: 0;
         width: 100%;
     }
 
