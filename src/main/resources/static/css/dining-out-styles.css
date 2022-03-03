@@ -5,9 +5,11 @@ img.phoenix-main {
 }
 
 .btn-body {
-    color: white;
-    border: 1px solid white;
+    color: gold;
+    border: 1px solid gold;
     background-color: transparent;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
 }
 
 .btn-body:hover {

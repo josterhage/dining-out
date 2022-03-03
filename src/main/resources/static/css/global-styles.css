@@ -144,6 +144,17 @@ main .body-text {
 footer {
     width: 100%;
     background-color: black;
+    color:gray;
+    padding-top:1rem;
+}
+
+footer a {
+    color:#b5c7f8;
+    text-decoration:none;
+}
+
+footer a:hover {
+    text-decoration: underline;
 }
 
 .appearance-testing {
@@ -281,6 +292,23 @@ img.centered {
 
 .btn-form-close:hover {
     border: 1px solid black;
+}
+
+.btn-big {
+    background-color: transparent;
+    border: 20px solid transparent;
+    color:gold;
+    font-size:3rem;
+    margin:2rem auto;
+    width:fit-content;
+    height:fit-content;
+    padding:0.25rem;
+}
+
+.btn-big:hover {
+    border:20px solid;
+    border-image: url('/images/lines/deco-border2-gold.svg');
+    border-image-slice: 31% 12%;
 }
 
 .rsvp-label {
@@ -530,7 +558,31 @@ img.centered {
 }
 
 img.icon-meals {
-    max-height:1rem;
+    max-height: 1rem;
+}
+
+table tr {
+    margin:.5rem;
+}
+
+table th {
+    border-bottom: 1px solid gray;
+    text-align:left;
+}
+
+table td, table th {
+    padding:0.5rem;
+}
+
+table tr > td:last-of-type {
+    text-align:right;
+}
+
+img.stripe-logo {
+    position:absolute;
+    bottom:0.5rem;
+    right:0.5rem;
+    max-width:160px;
 }
 
 /* stripe-specific styling */
@@ -811,9 +863,11 @@ button.btn-stripe:disabled {
     .btn-hamburger {
         display: block;
         background-color: white;
-        border: 1px solid var(--ui-dark);
+        border: 1px solid black;
         color: var(--text-dark);
         margin-right: auto;
+        padding: 0.25rem;
+        border-radius: 0.25rem;
     }
 
     .btn-hamburger:hover {
