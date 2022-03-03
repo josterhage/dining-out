@@ -57,6 +57,10 @@ function FormManager(appHost) {
         $('#getTicketsButton').on('click', showRsvpForm);
     });
 
+    this.showRsvpForm = function() {
+        showRsvpForm();
+    }
+
     function showRsvpForm() {
         $('.loader-frame').removeClass('hidden');
         $.ajax({
@@ -116,7 +120,7 @@ function FormManager(appHost) {
         //get the confirmationToken
         $.ajax({
             url: rsvpStartPath,
-            type: 'POST',
+            method: 'POST',
             data: JSON.stringify(guestDtos),
             contentType: 'application/json',
             beforeSend: function (xhr) {
@@ -197,7 +201,7 @@ function FormManager(appHost) {
 
 function CheckoutForm(checkout, appHost, csrf) {
     const pk = "pk_test_51KWNNWJnsiIlHanEhOtLOJSQJKtKqWx4mnXbMkmgrc2kEziYGVgfJlIa4esgsfrBaUhUbl8JQmOVVUFsTZ6Z2zii00asZ54jj1"
-    const sendTokenMessagePath = appHost + '/confirm/send-message/';
+    const abortPath = appHost + '/rsvp/abort/';
     const createIntentPath = appHost + '/checkout/create-payment-intent/';
     const $formDiv = $('#rsvpForm');
     const $formHolder = $('#formHolder');
@@ -215,37 +219,44 @@ function CheckoutForm(checkout, appHost, csrf) {
 
     const priceStr = (checkout['tierPrice'] * checkout['quantity'] / 100).toFixed(2);
     const feeStr = (checkout['fee'] / 100).toFixed(2);
-    const totalStr = total.toFixed(2);
+    const totalStr = (total/100).toFixed(2);
 
     const askAboutPurchase = `
     <div class="flex-row">
         <div class="text-med">Would you like to buy your ticket(s) now?</div>
     </div>
-   <div class="flex-row">
+    <div class="flex-row">
            Your Cost:
     </div>
-    <div class="flex-row">
-        <div class="flex-col">
-            <div class="flex-row">Quantity</div>
-            <div class="flex-row" id="checkoutQty"></div>             
-        </div>
-        <div class="flex-col">
-            <div class="flex-row">Description</div>
-            <div class="flex-row" id="checkoutTierName"></div>
-            <div class="flex-row">Online payment fee</div>
-            <div class="flex-row">Total</div>        
-        </div>
-        <div class="flex-col">
-            <div class="flex-row">Price</div>
-            <div class="flex-row" id="checkoutPrice"></div>
-            <div class="flex-row" id="serviceFee"></div>
-            <div class="flex-row" id="checkoutSum"></div>
-        </div>        
-    </div>
+    <table>
+    <tr>
+        <th>Quantity</th>
+        <th>Description</th>
+        <th>Price</th>
+    </tr>
+    <tr>
+        <td id="checkoutQty"></td>
+        <td id="checkoutTierName"></td>  
+        <td id="checkoutPrice"></td> 
+    </tr>
+    <tr>
+        <td></td>
+        <td>Online payment fee</td>
+        <td id="serviceFee"></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Total</td>
+        <td id="checkoutSum"></td>
+    </tr>
+    
+    </table>
+    
     <div class="flex-row">
         <button id="purchaseButton" class="btn btn-rsvp btn-rsvp-submit">Pay now</button>
         <button id="continueButton" class="btn btn-rsvp btn-rsvp-reset">Cancel</button>
     </div>
+    <a href="http://stripe.com"><img class="stripe-logo" src="/images/stripe/stripe-black.svg"></a>
     `;
 
     const checkoutForm = `
@@ -260,11 +271,9 @@ function CheckoutForm(checkout, appHost, csrf) {
     </form>
     `;
 
-    const messageSent = `
+    const aborted = `
     <div class="text-med">
-        Thank you <span id="guest-identity"></span>.<br/>
-        We have emailed you at <span id="guest-email"></span> with a link to confirm your reservation.<br/>
-        We look forward to seeing you!<br/>
+        Your RSVP has been cancelled.
         <div class="half-spacer"></div>
         <div class="text-sm">
             This dialog will close in <span id="close-countdown"></span> seconds.
@@ -312,17 +321,18 @@ function CheckoutForm(checkout, appHost, csrf) {
 
     function continueClicked(e) {
         e.preventDefault();
+        // let myData = JSON.stringify({clientSecret: checkout['clientSecret']});
+        // console.log(myData);
         $.ajax({
-            url: sendTokenMessagePath + checkout['token'],
+            url: abortPath + checkout['clientSecret'],
             method: 'POST',
+            // data: myData,
+            // contentType: 'application/json',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader(csrf['header'], csrf['token']);
             },
             success: function (data) {
-                console.log(data);
-                $formHolder.html(messageSent);
-                $('#guest-identity').html(`${data.grade['name']} ${data.firstName} ${data.lastName}`);
-                $('#guest-email').html(`${data.email}`);
+                $formHolder.html(aborted);
                 $('#close-countdown').html(closeTime);
                 intervalId = setInterval(closeTimer, 1000);
                 $('#getTicketsFormClose').on('click', function () {
