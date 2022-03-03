@@ -12,9 +12,15 @@
         <img class="phoenix-main" src="/images/111th_MI_BDE_Patch.svg"> The Soldiers and Leaders of the 111th
         Military Intelligence Brigade invite our friends and family to
         join us for a night of Hollywood Glamour as we celebrate our 2022 Dining Out on April 1st, 2022 at
-        Fort Huchuca's Thunder Mountain Activity Center.
+        Fort Huachuca's Thunder Mountain Activity Center.
     </div>
     <div class="styled-rule"></div>
+    <button class="btn btn-big" id="bigBuyNow">Buy Tickets Now</button>
+    <script>
+        $(document).ready(function() {
+            $('#bigBuyNow').on('click', formManager.showRsvpForm);
+        })
+    </script>
     <div id="slide-show"></div>
 </div>
 </body>

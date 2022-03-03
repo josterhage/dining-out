@@ -1,5 +1,6 @@
 package com.system559.diningout.service;
 
+import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.system559.diningout.dto.CheckoutDto;
 import com.system559.diningout.dto.GuestDto;
@@ -23,7 +24,6 @@ public class RsvpService {
     private final DtoMapper dtoMapper;
     private final GuestRepository guestRepository;
     private final MealRepository mealRepository;
-    private final RequestRepository requestRepository;
     private final GradeRepository gradeRepository;
     private final UnitRepository unitRepository;
 
@@ -34,7 +34,6 @@ public class RsvpService {
                        DtoMapper dtoMapper,
                        GuestRepository guestRepository,
                        MealRepository mealRepository,
-                       RequestRepository requestRepository,
                        GradeRepository gradeRepository,
                        UnitRepository unitRepository) {
         this.cancellationService = cancellationService;
@@ -43,7 +42,6 @@ public class RsvpService {
         this.dtoMapper = dtoMapper;
         this.guestRepository = guestRepository;
         this.mealRepository = mealRepository;
-        this.requestRepository = requestRepository;
         this.gradeRepository = gradeRepository;
         this.unitRepository = unitRepository;
     }
@@ -56,14 +54,6 @@ public class RsvpService {
             primary.setPartner(secondary);
             primary = guestRepository.save(primary);
         }
-
-//        CheckoutDto checkout = new CheckoutDto();
-//
-//        TicketTier tier = guests.size() == 2 ? getTopTier(guests) : primary.getGrade().getTier();
-
-//        checkout.setTier(tier);
-//        checkout.setQuantity(guests.size());
-//        checkout.setToken(confirmationService.createToken(primary));
 
         return checkoutService.getPaymentIntent(primary);
     }
@@ -81,6 +71,10 @@ public class RsvpService {
         guest = guestRepository.save(guest);
 
         return guest;
+    }
+
+    public void abortRsvp(String clientSecret) throws StripeException {
+        checkoutService.abortCheckout(clientSecret);
     }
 
     private void validate(GuestDto dto) {

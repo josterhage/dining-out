@@ -65,13 +65,6 @@ public class DtoMapper {
                 .build();
     }
 
-    public Request dtoToRequest(RequestDto dto) {
-        return Request.builder()
-                .name(dto.getName())
-                .description(dto.getDescription())
-                .build();
-    }
-
     public Salute dtoToSalute(SaluteDto dto) {
         return Salute.builder().name(dto.getName()).build();
     }

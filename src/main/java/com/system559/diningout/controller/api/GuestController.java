@@ -18,7 +18,6 @@ public class GuestController {
     private final GuestRepository guestRepository;
     private final GradeRepository gradeRepository;
     private final MealRepository mealRepository;
-    private final RequestRepository requestRepository;
     private final UnitRepository unitRepository;
 
     @Autowired
@@ -26,13 +25,11 @@ public class GuestController {
                            GuestRepository guestRepository,
                            GradeRepository gradeRepository,
                            MealRepository mealRepository,
-                           RequestRepository requestRepository,
                            UnitRepository unitRepository) {
         this.dtoMapper = dtoMapper;
         this.guestRepository = guestRepository;
         this.gradeRepository = gradeRepository;
         this.mealRepository = mealRepository;
-        this.requestRepository = requestRepository;
         this.unitRepository = unitRepository;
     }
 

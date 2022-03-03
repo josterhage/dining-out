@@ -13,7 +13,7 @@ public class HomeController {
     @Value("${APPLICATION_HOST}")
     private String appHost;
 
-    @GetMapping
+    @GetMapping("/")
     public String homePage(Model model) {
         model.addAttribute("appHost",appHost);
         return "index";
