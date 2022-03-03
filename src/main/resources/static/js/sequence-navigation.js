@@ -28,9 +28,6 @@ function SequenceNavigator() {
         let width = $item.width();
         let marginLeft = $item.css('margin-left');
 
-        console.log('position: ', position);
-        console.log('width: ', width);
-
         $item.css('position','fixed');
         $item.css('left',position.left);
         $item.css('top',position.top);

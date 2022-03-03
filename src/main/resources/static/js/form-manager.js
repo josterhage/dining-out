@@ -112,8 +112,6 @@ function FormManager(appHost) {
             });
         }
 
-        console.log(guestDtos);
-
         csrf['header'] = $('#rsvpCsrfHeader').val();
         csrf['token'] = $('#rsvpCsrfToken').val();
 
@@ -179,7 +177,6 @@ function FormManager(appHost) {
 
     function gradeChanged(e) {
         if (isCivilian($(`#guest${e.data.guest}grade`).val())) {
-            console.log('still true');
             $(`#saluteBox${e.data.guest}`).removeClass('hidden');
         } else {
             $(`#saluteBox${e.data.guest}`).addClass('hidden');
@@ -189,9 +186,7 @@ function FormManager(appHost) {
     function isCivilian(grade) {
         let result = false;
         civGrades.forEach(function (value) {
-            console.log(`grade: ${grade}, value: ${value}, grade === value ${grade === value}`);
             if (grade === value) {
-                console.log('true');
                 result = true;
             }
         })
@@ -321,13 +316,9 @@ function CheckoutForm(checkout, appHost, csrf) {
 
     function continueClicked(e) {
         e.preventDefault();
-        // let myData = JSON.stringify({clientSecret: checkout['clientSecret']});
-        // console.log(myData);
         $.ajax({
             url: abortPath + checkout['clientSecret'],
             method: 'POST',
-            // data: myData,
-            // contentType: 'application/json',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader(csrf['header'], csrf['token']);
             },
