@@ -128,43 +128,43 @@ public class CheckoutService {
     }
 
     private void sendEmail(Ticket ticket) throws MessagingException, IOException, WriterException {
-        MimeMessage message = sender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message,true);
-        helper.setTo(ticket.getGuest().getEmail());
-        helper.setFrom("dining-out-confirmation-do-not-reply@system559.com");
-        helper.setSubject("111th MI Brigade Dining Out Ticket Purchase");
-        helper.setText(TicketService.getPersonAddress(ticket.getGuest()) + "\n" +
-                "Thank you for buying your ticket(s) to the 111th MI BDE Dining Out.\n" +
-                "A .PDF file with your ticket is attached to this message, and your confirmation number is " + ticket.getId() + "\n" +
-                "If you need to cancel please go to " + appHost + "/cancel/" + ticket.getId() + "\n" +
-                "Thank you,\n" +
-                "The 111th Dining Out Team");
-        helper.addAttachment(TicketService.getPersonFullName(ticket.getGuest()).replaceAll("\\s",""),ticketService.createPdf(ticket),"application/pdf");
-        sender.send(message);
+//        MimeMessage message = sender.createMimeMessage();
+//        MimeMessageHelper helper = new MimeMessageHelper(message,true);
+//        helper.setTo(ticket.getGuest().getEmail());
+//        helper.setFrom("dining-out-confirmation-do-not-reply@system559.com");
+//        helper.setSubject("111th MI Brigade Dining Out Ticket Purchase");
+//        helper.setText(TicketService.getPersonAddress(ticket.getGuest()) + "\n" +
+//                "Thank you for buying your ticket(s) to the 111th MI BDE Dining Out.\n" +
+//                "A .PDF file with your ticket is attached to this message, and your confirmation number is " + ticket.getId() + "\n" +
+//                "If you need to cancel please go to " + appHost + "/cancel/" + ticket.getId() + "\n" +
+//                "Thank you,\n" +
+//                "The 111th Dining Out Team");
+//        helper.addAttachment(TicketService.getPersonFullName(ticket.getGuest()).replaceAll("\\s",""),ticketService.createPdf(ticket),"application/pdf");
+//        sender.send(message);
 
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        String address =
-//                format("%s %s %s",
-//                        ticket.getGuest().getGrade().getName(),
-//                        ticket.getGuest().getFirstName(),
-//                        ticket.getGuest().getLastName());
-//
-//        message.setTo(ticket.getGuest().getEmail());
-//        message.setSubject("111th MI Brigade Dining Out Ticket Purchase");
-//        message.setFrom("dining-out-confirmation-do-not-reply@system559.com");
-//        message.setText(
-//                format("%s,\n" +
-//                                "Thank you for buying your ticket(s) to the 111th MI BDE Dining Out.\n" +
-//                                "Your confirmation number is %s.\n" +
-//                                "If you need to cancel please go to %s/cancel/%s.\n" +
-//                                "Thanks,\n" +
-//                                "The 111th Dining Out Team",
-//                        address,
-//                        ticket.getId(),
-//                        appHost,
-//                        ticket.getId()));
-//
-//        emailSenderService.sendEmail(message);
+        SimpleMailMessage message = new SimpleMailMessage();
+        String address =
+                format("%s %s %s",
+                        ticket.getGuest().getGrade().getName(),
+                        ticket.getGuest().getFirstName(),
+                        ticket.getGuest().getLastName());
+
+        message.setTo(ticket.getGuest().getEmail());
+        message.setSubject("111th MI Brigade Dining Out Ticket Purchase");
+        message.setFrom("dining-out-confirmation-do-not-reply@system559.com");
+        message.setText(
+                format("%s,\n" +
+                                "Thank you for buying your ticket(s) to the 111th MI BDE Dining Out.\n" +
+                                "Your confirmation number is %s.\n" +
+                                "If you need to cancel please go to %s/cancel/%s.\n" +
+                                "Thanks,\n" +
+                                "The 111th Dining Out Team",
+                        address,
+                        ticket.getId(),
+                        appHost,
+                        ticket.getId()));
+
+        emailSenderService.sendEmail(message);
     }
 
     private TicketTier getTier(Guest guest) {
