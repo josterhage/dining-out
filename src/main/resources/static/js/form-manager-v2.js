@@ -417,6 +417,7 @@ function CheckoutForm(data,host,csrf) {
         //if the paymentelement doesn't get mounted in 15 seconds, try again
         let elementMountTimerId = createInterval(() => {
             if(!$.trim($("#payment-element").html())) {
+                showMessage("It's taking longer than usual to load the payment form");
                 paymentElement.unmount();
                 paymentElement.mount('#payment-element');
             } else {
