@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="appHost" th:content="${appHost}">
+    <meta th:name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <link href="/images/111th_MI_BDE_Patch.svg" rel="icon">
 
@@ -23,7 +25,7 @@
     <script src="/js/maps.js"></script>
     <script src="/js/slide-show.js"></script>
     <script src="/js/sequence-navigation.js"></script>
-    <script src="/js/form-manager.js"></script>
+    <script src="/js/form-manager-v2.js"></script>
 
     <title>111th MI BDE Dining Out - 04.01.2022</title>
 </head>
@@ -79,14 +81,14 @@
     //load slideshow
     // const host = $("meta[name='appHost']").attr("content");
     const host = "[(${appHost})]";
+    const csrf = {
+        token: $("meta[name='_csrf']").attr("content"),
+        header: $("meta[name='_csrf_header']").attr("content")
+    }
 
     let slideShow = new SlideShow(['images/263303036_265475378946822_6199204000457916659_n.jpg', 'images/111th_MI_BDE_Patch.svg'], 5);
     let textNavigator = new TextNavigator(host);
-    let formManager = new FormManager(host);
-
-    $(document).ready(function() {
-        alert("Sadly ticket sales have not yet begun. Feel free to explore the page. If you encounter issues there's a contact email address at the bottom of each page.")
-    })
+    let formManager = new FormManager(host,csrf);
 
 </script>
 

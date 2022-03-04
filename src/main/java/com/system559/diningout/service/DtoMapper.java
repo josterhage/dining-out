@@ -53,7 +53,6 @@ public class DtoMapper {
                 .unit(unitRepository.findByName(dto.getUnit())
                         .orElseThrow(() -> new RecordNameNotFoundException("Unit", dto.getUnit())))
                 .email(dto.getEmail())
-                .partner(guestRepository.findById(dto.getPartnerId()).orElse(null))
                 .isConfirmed(dto.isConfirmed())
                 .build();
     }

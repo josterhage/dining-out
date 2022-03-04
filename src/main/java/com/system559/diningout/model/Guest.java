@@ -4,6 +4,7 @@ import com.mongodb.lang.Nullable;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class Guest {
 
     private String firstName;
     private String lastName;
+    @DBRef
     private Grade grade;
     private Salute salute;
     private Meal meal;
@@ -22,7 +24,6 @@ public class Guest {
     private Unit unit;
     @Indexed(unique = true)
     private String email;
-    @Nullable
-    private Guest partner;
+    private List<String> partnerIds;
     private boolean isConfirmed;
 }

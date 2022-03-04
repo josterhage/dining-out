@@ -25,9 +25,13 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -59,9 +63,13 @@ public class CheckoutService {
     }
 
     public CheckoutDto getPaymentIntent(Guest guest) throws StripeException {
-        TicketTier tier = getTier(guest);
+        List<Guest> guests = new ArrayList<>();
+        for(String id : guest.getPartnerIds()) {
+            guests.add(guestRepository.findById(id).get());
+        }
+        TicketTier tier = getTier(guests);
         long price = tier.getPrice();
-        int quantity = Objects.isNull(guest.getPartner()) ? 1 : 2;
+        int quantity = guest.getPartnerIds().size();
         long fee = Math.round((price * quantity) * 0.029) + 30;
         long total = (price * quantity) + fee;
 
@@ -92,16 +100,17 @@ public class CheckoutService {
         Checkout checkout = checkoutRepository.findByClientSecret(clientSecret)
                 .orElseThrow(() -> new RecordNotFoundException("Checkout", "clientSecret", clientSecret));
         checkoutRepository.delete(checkout);
-        checkout.getGuest().setConfirmed(true);
-        if (!Objects.isNull(checkout.getGuest().getPartner())) {
-            checkout.getGuest().getPartner().setConfirmed(true);
-            guestRepository.save(checkout.getGuest().getPartner());
+
+        for(String guestId : checkout.getGuest().getPartnerIds()) {
+            Guest guest = guestRepository.findById(guestId).get();
+            guest.setConfirmed(true);
+            guestRepository.save(guest);
         }
 
-        Ticket ticket = ticketService.createTicket(checkout.getGuest(),paymentIntent);
-        sendEmail(ticket);
+        List<Ticket> tickets = ticketService.createTicket(checkout.getGuest(),paymentIntent);
+        sendEmail(tickets.get(0));
 
-        return guestRepository.save(checkout.getGuest());
+        return checkout.getGuest();
     }
 
     public void abortCheckout(String clientSecret) throws StripeException{
@@ -117,61 +126,63 @@ public class CheckoutService {
         PaymentIntentCancelParams params = PaymentIntentCancelParams.builder().build();
         PaymentIntent paymentIntent = resource.cancel(params);
 
-        //delete the guest objects
-        if(!Objects.isNull(checkout.getGuest().getPartner())) {
-            guestRepository.delete(checkout.getGuest().getPartner());
+        for(String guestId : checkout.getGuest().getPartnerIds()) {
+            guestRepository.deleteById(guestId);
         }
-
-        guestRepository.delete(checkout.getGuest());
 
         checkoutRepository.delete(checkout);
     }
 
     private void sendEmail(Ticket ticket) throws MessagingException, IOException, WriterException {
-        MimeMessage message = sender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message,true);
-        helper.setTo(ticket.getGuest().getEmail());
-        helper.setFrom("dining-out-confirmation-do-not-reply@system559.com");
-        helper.setSubject("111th MI Brigade Dining Out Ticket Purchase");
-        helper.setText(TicketService.getPersonAddress(ticket.getGuest()) + "\n" +
-                "Thank you for buying your ticket(s) to the 111th MI BDE Dining Out.\n" +
-                "A .PDF file with your ticket is attached to this message, and your confirmation number is " + ticket.getId() + "\n" +
-                "If you need to cancel please go to " + appHost + "/cancel/" + ticket.getId() + "\n" +
-                "Thank you,\n" +
-                "The 111th Dining Out Team");
-        helper.addAttachment(TicketService.getPersonFullName(ticket.getGuest()).replaceAll("\\s",""),ticketService.createPdf(ticket),"application/pdf");
-        sender.send(message);
+//        MimeMessage message = sender.createMimeMessage();
+//        MimeMessageHelper helper = new MimeMessageHelper(message,true);
+//        helper.setTo(ticket.getGuest().getEmail());
+//        helper.setFrom("dining-out-confirmation-do-not-reply@system559.com");
+//        helper.setSubject("111th MI Brigade Dining Out Ticket Purchase");
+//        helper.setText(TicketService.getPersonAddress(ticket.getGuest()) + "\n" +
+//                "Thank you for buying your ticket(s) to the 111th MI BDE Dining Out.\n" +
+//                "A .PDF file with your ticket is attached to this message, and your confirmation number is " + ticket.getId() + "\n" +
+//                "If you need to cancel please go to " + appHost + "/cancel/" + ticket.getId() + "\n" +
+//                "Thank you,\n" +
+//                "The 111th Dining Out Team");
+//        helper.addAttachment(TicketService.getPersonFullName(ticket.getGuest()).replaceAll("\\s",""),ticketService.createPdf(ticket),"application/pdf");
+//        sender.send(message);
 
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        String address =
-//                format("%s %s %s",
-//                        ticket.getGuest().getGrade().getName(),
-//                        ticket.getGuest().getFirstName(),
-//                        ticket.getGuest().getLastName());
-//
-//        message.setTo(ticket.getGuest().getEmail());
-//        message.setSubject("111th MI Brigade Dining Out Ticket Purchase");
-//        message.setFrom("dining-out-confirmation-do-not-reply@system559.com");
-//        message.setText(
-//                format("%s,\n" +
-//                                "Thank you for buying your ticket(s) to the 111th MI BDE Dining Out.\n" +
-//                                "Your confirmation number is %s.\n" +
-//                                "If you need to cancel please go to %s/cancel/%s.\n" +
-//                                "Thanks,\n" +
-//                                "The 111th Dining Out Team",
-//                        address,
-//                        ticket.getId(),
-//                        appHost,
-//                        ticket.getId()));
-//
-//        emailSenderService.sendEmail(message);
+        SimpleMailMessage message = new SimpleMailMessage();
+        String address =
+                format("%s %s %s",
+                        ticket.getGuest().getGrade().getName(),
+                        ticket.getGuest().getFirstName(),
+                        ticket.getGuest().getLastName());
+
+        message.setTo(ticket.getGuest().getEmail());
+        message.setSubject("111th MI Brigade Dining Out Ticket Purchase");
+        message.setFrom("dining-out-confirmation-do-not-reply@system559.com");
+        message.setText(
+                format("%s,\n" +
+                                "Thank you for buying your ticket(s) to the 111th MI BDE Dining Out.\n" +
+                                "Your confirmation number is %s.\n" +
+                                "If you need to cancel please go to %s/cancel/%s.\n" +
+                                "Thanks,\n" +
+                                "The 111th Dining Out Team",
+                        address,
+                        ticket.getId(),
+                        appHost,
+                        ticket.getId()));
+
+        emailSenderService.sendEmail(message);
     }
 
-    private TicketTier getTier(Guest guest) {
-        TicketTier tier = guest.getGrade().getTier();
-        if (!Objects.isNull(guest.getPartner())) {
-            TicketTier tier2 = guest.getPartner().getGrade().getTier();
-            tier = tier2.getPrice() > tier.getPrice() ? tier2 : tier;
+    public static TicketTier getTier(List<Guest> guests) {
+        TicketTier tier = null;
+        for(Guest guestIteration : guests) {
+            if(Objects.isNull(tier)) {
+                tier = guestIteration.getGrade().getTier();
+                continue;
+            }
+            if(guestIteration.getGrade().getTier().getPrice() > tier.getPrice()) {
+                tier = guestIteration.getGrade().getTier();
+            }
         }
         return tier;
     }

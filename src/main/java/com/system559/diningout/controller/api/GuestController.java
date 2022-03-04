@@ -89,11 +89,6 @@ public class GuestController {
             case("email"):
                 update.setEmail(value);
                 break;
-            case("partner"):
-                Guest partner = guestRepository.findById(value)
-                        .orElseThrow(() -> new RecordIdNotFoundException("Guest",value));
-                update.setPartner(partner);
-                break;
             case("isConfirmed"):
                 update.setConfirmed(Boolean.parseBoolean(value));
                 break;

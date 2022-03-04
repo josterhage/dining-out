@@ -13,8 +13,6 @@ public interface GuestRepository extends MongoRepository<Guest,String> {
     List<Guest> findByLastName(String lastName);
     List<Guest> findByGrade(Grade grade);
     List<Guest> findByMeal(Meal meal);
-    //How do I find by a single request?
     List<Guest> findByUnit(Unit unit);
-    Optional<Guest> findByPartner(Guest partner);
     Optional<Guest> findByEmail(String email);
 }
