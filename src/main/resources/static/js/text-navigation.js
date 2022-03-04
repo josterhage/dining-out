@@ -12,6 +12,7 @@ function TextNavigator(baseUrl) {
         $('#nav-dress').on('click',onDressClick);
 
         $('main').html(await getView('home'));
+        $('#bigBuyNow').on('click',formManager.showForm);
         lastClicked = 'home';
     });
 
@@ -19,6 +20,7 @@ function TextNavigator(baseUrl) {
         $('main').html(await getView('home'));
         updateClicks();
         $('nav-home').off('click',onHomeClick);
+        $('#bigBuyNow').on('click',formManager.showForm);
         lastClicked = 'home';
     }
 

@@ -76,6 +76,10 @@ function FormManager(host, csrf) {
         $('#bigBuyNow').on('click',showForm);
     })
 
+    this.showForm = async function() {
+        await showForm();
+    }
+
     async function showForm() {
 
         grades = await $.ajax({
