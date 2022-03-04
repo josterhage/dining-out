@@ -9,28 +9,31 @@ import com.system559.diningout.model.Grade;
 import com.system559.diningout.model.Guest;
 import com.system559.diningout.model.TicketTier;
 import com.system559.diningout.repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service("rsvpService")
 public class RsvpService {
     private final CancellationService cancellationService;
     private final CheckoutService checkoutService;
-    private final ConfirmationService confirmationService;
     private final DtoMapper dtoMapper;
     private final GuestRepository guestRepository;
     private final MealRepository mealRepository;
     private final GradeRepository gradeRepository;
     private final UnitRepository unitRepository;
+    private final Logger logger = LoggerFactory.getLogger(RsvpService.class);
 
     @Autowired
     public RsvpService(CancellationService cancellationService,
                        CheckoutService checkoutService,
-                       ConfirmationService confirmationService,
                        DtoMapper dtoMapper,
                        GuestRepository guestRepository,
                        MealRepository mealRepository,
@@ -38,7 +41,6 @@ public class RsvpService {
                        UnitRepository unitRepository) {
         this.cancellationService = cancellationService;
         this.checkoutService = checkoutService;
-        this.confirmationService = confirmationService;
         this.dtoMapper = dtoMapper;
         this.guestRepository = guestRepository;
         this.mealRepository = mealRepository;
@@ -46,16 +48,23 @@ public class RsvpService {
         this.unitRepository = unitRepository;
     }
 
-    public CheckoutDto startRsvp(List<GuestDto> guests) throws StripeException {
-        Guest primary = createRsvp(guests.get(0));
-        if(guests.size() == 2) {
-            guests.get(1).setPartnerId(primary.getId());
-            Guest secondary = createRsvp(guests.get(1));
-            primary.setPartner(secondary);
-            primary = guestRepository.save(primary);
+    public CheckoutDto startRsvp(List<GuestDto> dtos) throws StripeException {
+        List<Guest> guests = new ArrayList<>();
+        for (GuestDto dto : dtos) {
+            guests.add(dtoMapper.dtoToGuest(dto));
         }
 
-        return checkoutService.getPaymentIntent(primary);
+        List<String> partnerIds = new ArrayList<>();
+
+        for (Guest guest : guests) {
+            guestRepository.save(guest);
+            partnerIds.add(guest.getId());
+            guest.setPartnerIds(partnerIds);
+        }
+
+        guestRepository.saveAll(guests);
+
+        return checkoutService.getPaymentIntent(guests.get(0));
     }
 
     public Guest createRsvp(GuestDto dto)
@@ -90,9 +99,9 @@ public class RsvpService {
 
     private TicketTier getTopTier(List<GuestDto> dtos) {
         Grade gradeOne = gradeRepository.findByName(dtos.get(0).getGrade())
-                .orElseThrow(() -> new RecordNameNotFoundException("Grade",dtos.get(0).getGrade()));
+                .orElseThrow(() -> new RecordNameNotFoundException("Grade", dtos.get(0).getGrade()));
         Grade gradeTwo = gradeRepository.findByName(dtos.get(1).getGrade())
-                .orElseThrow(() -> new RecordNameNotFoundException("Grade",dtos.get(1).getGrade()));
+                .orElseThrow(() -> new RecordNameNotFoundException("Grade", dtos.get(1).getGrade()));
 
         return gradeOne.getTier().getPrice() > gradeTwo.getTier().getPrice() ? gradeOne.getTier() : gradeTwo.getTier();
     }

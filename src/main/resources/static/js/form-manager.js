@@ -14,10 +14,6 @@ function FormManager(appHost) {
         token: ""
     }
 
-    this.guestDtos = function () {
-        return guestDtos;
-    }
-
     let guestDtos = [{
         firstName: "",
         lastName: "",
@@ -56,10 +52,6 @@ function FormManager(appHost) {
     $(document).ready(function () {
         $('#getTicketsButton').on('click', showRsvpForm);
     });
-
-    this.showRsvpForm = function() {
-        showRsvpForm();
-    }
 
     function showRsvpForm() {
         $('.loader-frame').removeClass('hidden');

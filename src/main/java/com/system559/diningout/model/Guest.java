@@ -24,7 +24,6 @@ public class Guest {
     private Unit unit;
     @Indexed(unique = true)
     private String email;
-    @Nullable
-    private Guest partner;
+    private List<String> partnerIds;
     private boolean isConfirmed;
 }

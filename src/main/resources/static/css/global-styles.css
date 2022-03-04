@@ -253,6 +253,10 @@ footer a:hover {
     border-color: red;
 }
 
+.btn-rsvp-add:hover {
+    border-color: black;
+}
+
 img.centered {
     margin: 0 auto;
 }
@@ -407,7 +411,7 @@ img.centered {
     height: 100%;
     width: 100%;
     background-color: rgba(10, 10, 10, 0.6);
-    z-index: 300;
+    z-index: 1;
 }
 
 .form-body .form-box {
@@ -422,6 +426,7 @@ img.centered {
     font-family: Semplicita;
     font-size: 1.25rem;
     overflow-y: auto;
+    z-index: 2;
 }
 
 .horizontal-spacer {

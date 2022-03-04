@@ -18,8 +18,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -58,16 +60,13 @@ public class CancellationService {
         RefundCreateParams params =
                 RefundCreateParams.builder().setPaymentIntent(token.getTicket().getPaymentIntent()).build();
 
-        Guest primary = token.getTicket().getGuest();
-        guestRepository.delete(primary);
-        ticketRepository.delete(token.getTicket());
+        List<Guest> guests = token.getTicket().getGuest().getPartnerIds().stream().map((id) -> {
+            return guestRepository.findById(id).get();
+        }).collect(Collectors.toList());
 
-        if(!Objects.isNull(primary.getPartner())) {
-            Ticket secondary = ticketRepository.findByGuest(primary.getPartner())
-                    .orElseThrow(() -> new RecordNotFoundException("Ticket","guestId",primary.getPartner().getId()));
-
-            guestRepository.delete(primary.getPartner());
-            ticketRepository.delete(secondary);
+        for(Guest guest : guests) {
+            guestRepository.delete(guest);
+            ticketRepository.deleteByGuest(guest);
         }
 
         Refund.create(params);
