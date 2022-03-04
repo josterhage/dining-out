@@ -456,7 +456,7 @@ function CheckoutForm(data,host,csrf) {
     function buildCheckoutForm() {
         let price = (data['tierPrice'] * data['quantity'] / 100).toFixed(2);
         let fee = (data['fee'] / 100).toFixed(2);
-        let total = ((price + data['fee']) /100).toFixed(2);
+        let total = (((data['tierPrice'] * data['quantity']) + data['fee']) /100).toFixed(2);
 
         return `
         <div class="flex-row">
