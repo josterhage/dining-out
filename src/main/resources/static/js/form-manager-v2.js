@@ -81,6 +81,7 @@ function FormManager(host, csrf) {
     }
 
     async function showForm() {
+        $('.loader-frame').removeClass('hidden');
 
         grades = await $.ajax({
             url: host + '/api/grade',
@@ -107,6 +108,7 @@ function FormManager(host, csrf) {
         })
 
         $('#getTicketsFormHolder').html(formOutline);
+        $('.loader-frame').addClass('hidden');
         $('#getTicketsFormClose').on('click', closeForm);
         $('#unit').append(unitOptions);
         $('#guestContainer').append(createGuestBlock(guestIndex));
