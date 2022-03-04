@@ -73,6 +73,7 @@ function FormManager(host, csrf) {
     $(document).ready(function () {
 
         $('#getTicketsButton').on('click', showForm);
+        $('#bigBuyNow').on('click',showForm);
     })
 
     async function showForm() {
