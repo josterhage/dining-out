@@ -322,7 +322,7 @@ function FormManager(host, csrf) {
 
     function missingFieldsModal() {
         $('body').append(`
-        <div id="modal" style="position:fixed; top:30vh; left:40vw; width:20vw; height:fit-content; border-radius:0.25rem; background-color:white; z-index:3; border: 1px solid lightgray">
+        <div id="modal" class="modal">
             <button id="modalClose" class="btn btn-form-close">
             <i class="fa-solid fa-times"></i>
             </button>
@@ -399,6 +399,8 @@ function CheckoutForm(data,host,csrf) {
     $formDiv.html(buildCheckoutForm());
     $('#purchaseButton').on('click',purchaseClicked);
     $('#cancelButton').on('click',cancelClicked);
+    $('#getTicketsFormClose').on('click',cancelClicked);
+    $(window).on('unload',cancelClicked);
 
     async function purchaseClicked(e) {
         e.preventDefault();
