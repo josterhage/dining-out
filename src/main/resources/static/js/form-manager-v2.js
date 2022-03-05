@@ -399,6 +399,8 @@ function CheckoutForm(data,host,csrf) {
     $formDiv.html(buildCheckoutForm());
     $('#purchaseButton').on('click',purchaseClicked);
     $('#cancelButton').on('click',cancelClicked);
+    $('#getTicketsFormClose').on('click',cancelClicked);
+    $(window).on('unload',cancelClicked);
 
     async function purchaseClicked(e) {
         e.preventDefault();
