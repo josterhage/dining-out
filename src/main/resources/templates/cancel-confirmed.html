@@ -4,7 +4,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="appHost" th:content="${appHost}">
 
     <link href="/images/111th_MI_BDE_Patch.svg" rel="icon">
 
@@ -66,8 +65,7 @@
     </div>
 </div>
 
-<script inline="javascript">
-    let host = /*[[${appHost}]]*/ "";
+<script th:inline="javascript">
     let intervalId;
     let count = 10;
 

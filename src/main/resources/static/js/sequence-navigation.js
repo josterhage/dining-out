@@ -26,7 +26,6 @@ function SequenceNavigator() {
         $item.removeClass('hidden');
         let position = $item.offset();
         let width = $item.width();
-        let marginLeft = $item.css('margin-left');
 
         $item.css('position','fixed');
         $item.css('left',position.left);

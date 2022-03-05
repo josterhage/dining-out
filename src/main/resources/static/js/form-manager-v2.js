@@ -14,10 +14,6 @@ function FormManager(host, csrf) {
 
     let guestIndex = 1;
 
-    this.guestIndex = function () {
-        return guestIndex;
-    }
-
     const civGrades = [
         'WS/WG5',
         'WS/WG6',
@@ -80,13 +76,10 @@ function FormManager(host, csrf) {
         await showForm();
     }
 
-    this.clear = function() {
-        guestIndex = 0;
-        guestDtos.length = 0;
-    }
-
     async function showForm() {
-        $('.loader-frame').removeClass('hidden');
+        const $loader = $('.loader-frame');
+        const $rsvpForm = $('#rsvpForm');
+        $loader.removeClass('hidden');
 
         grades = await $.ajax({
             url: host + '/api/grade',
@@ -113,13 +106,13 @@ function FormManager(host, csrf) {
         })
 
         $('#getTicketsFormHolder').html(formOutline);
-        $('.loader-frame').addClass('hidden');
+        $loader.addClass('hidden');
         $('#getTicketsFormClose').on('click', closeForm);
         $('#unit').append(unitOptions);
         $('#guestContainer').append(createGuestBlock(guestIndex));
         $('#addGuest').on('click', addGuest);
-        $('#rsvpForm').on('submit', doSubmit);
-        $('#rsvpForm').on('reset', doReset);
+        $rsvpForm.on('submit', doSubmit);
+        $rsvpForm.on('reset', doReset);
         $(`#guest${guestIndex}grade`).on('change',{id: guestIndex}, gradeChanged)
     }
 
@@ -152,21 +145,25 @@ function FormManager(host, csrf) {
         })
     }
 
-    function doReset(e) {
+    function doReset() {
+        const $unitValidation = $('#unitValidation');
+        const $emailValidation = $('#emailValidation');
+        const $removeGuest = $('#removeGuest');
         for (let i = 2; i <= guestIndex; i++) {
             $(`#guest${i}`).remove();
         }
 
-        $('#unitValidation').addClass('validation-spacer');
-        $('#unitValidation').removeClass('validation-danger');
-        $('#emailValidation').addClass('validation-spacer');
-        $('#emailValidation').removeClass('validation-danger');
+        $unitValidation.addClass('validation-spacer');
+        $unitValidation.removeClass('validation-danger');
+        $emailValidation.addClass('validation-spacer');
+        $emailValidation.removeClass('validation-danger');
         requiredFields.forEach(function (value) {
-            $(`#guest1${value}Validation`).addClass('validation-spacer');
-            $(`#guest1${value}Validation`).removeClass('validation-danger');
+            let $fieldValidation =$(`#guest1${value}Validation`);
+            $fieldValidation.addClass('validation-spacer');
+            $fieldValidation.removeClass('validation-danger');
         })
-        $('#removeGuest').addClass('hidden');
-        $('#removeGuest').off('click', removeGuest);
+        $removeGuest.addClass('hidden');
+        $removeGuest.off('click', removeGuest);
         guestIndex = 1;
     }
 
@@ -175,8 +172,9 @@ function FormManager(host, csrf) {
         $('#guestContainer').append(createGuestBlock(guestIndex));
         $(`#guest${guestIndex}grade`).on('change',{id: guestIndex}, gradeChanged)
         if (guestIndex === 2) {
-            $('#removeGuest').removeClass('hidden');
-            $('#removeGuest').on('click', removeGuest);
+            const $removeGuest = $('#removeGuest');
+            $removeGuest.removeClass('hidden');
+            $removeGuest.on('click', removeGuest);
         }
     }
 
@@ -187,8 +185,9 @@ function FormManager(host, csrf) {
         $(`#guest${guestIndex}`).remove();
         guestIndex--;
         if (guestIndex === 1) {
-            $('#removeGuest').addClass('hidden');
-            $('#removeGuest').off('click', removeGuest);
+            let $removeGuest =$('#removeGuest');
+            $removeGuest.addClass('hidden');
+            $removeGuest.off('click', removeGuest);
         }
     }
 
@@ -196,7 +195,6 @@ function FormManager(host, csrf) {
         let gradeOptions;
         let mealOptions;
         let saluteOptions;
-        let unitOptions;
 
         grades.forEach(function (value) {
             gradeOptions = gradeOptions +
@@ -286,20 +284,22 @@ function FormManager(host, csrf) {
 
     function validate() {
         let valid = true;
+        const $unit = $('#unit');
+        const $guestEmail = $('#guestEmail');
         //check for a unit
-        if ($('#unit').val() === null) {
+        if ($unit.val() === null) {
             let $element = $('#unitValidation');
             $element.addClass('validation-danger');
             $element.removeClass('validation-spacer');
-            $('#unit').on('change',{field: '#unit'},fieldChanged);
+            $unit.on('change',{field: '#unit'},fieldChanged);
             valid = false;
         }
 
-        if ($('#guestEmail').val() === "") {
+        if ($guestEmail.val() === "") {
             let $element = $('#emailValidation');
             $element.addClass('validation-danger');
             $element.removeClass('validation-spacer');
-            $('#guestEmail').on('change',{field: '#email'},fieldChanged);
+            $guestEmail.on('change',{field: '#email'},fieldChanged);
             valid=false;
         }
         for (let i = 1; i <= guestIndex; i++) {
@@ -367,11 +367,11 @@ function FormManager(host, csrf) {
 
 function CheckoutForm(data,host,csrf) {
     //TODO: is there a better way to stor this?
-    const pk = "pk_live_51KWNNWJnsiIlHanE8eznrW4yrpNUnQmcTqrrr0GpHkUVBvolCgERAqwMyrJ2MBtQEuasxwl3PhGpr0jKo0Uje6sB00aiNuRgcL"
+    const pk = "pk_test_51KWNNWJnsiIlHanEhOtLOJSQJKtKqWx4mnXbMkmgrc2kEziYGVgfJlIa4esgsfrBaUhUbl8JQmOVVUFsTZ6Z2zii00asZ54jj1"
     const abortPath = host + '/rsvp/abort/';
-    const createIntentPath = host + '/checkout/create-payment-intent/';
     const $formDiv = $('#rsvpForm');
     const $formHolder = $('#formHolder');
+    const $getTicketsFormClose = $('#getTicketsFormClose');
 
     let stripe;
     let elements;
@@ -404,7 +404,7 @@ function CheckoutForm(data,host,csrf) {
     $formDiv.html(buildCheckoutForm());
     $('#purchaseButton').on('click',purchaseClicked);
     $('#cancelButton').on('click',cancelClicked);
-    $('#getTicketsFormClose').on('click',cancelClicked);
+    $getTicketsFormClose.on('click',cancelClicked);
 
     async function purchaseClicked(e) {
         e.preventDefault();
@@ -440,11 +440,11 @@ function CheckoutForm(data,host,csrf) {
             beforeSend: function (xhr) {
                 xhr.setRequestHeader(csrf['header'],csrf['token']);
             },
-            success: function (data) {
+            success: function () {
                 $formHolder.html(aborted);
                 $('#close-countdown').html(closeTime);
                 intervalId=setInterval(closeTimer,1000);
-                $('#getTicketsFormClose').on('click', function() {
+                $getTicketsFormClose.on('click', function() {
                     clearInterval(intervalId);
                 })
             }
@@ -455,7 +455,7 @@ function CheckoutForm(data,host,csrf) {
         closeTime--;
         $('#close-countdown').html(closeTime);
         if(closeTime === 0) {
-            $('#getTicketsFormClose').trigger('click');
+            $getTicketsFormClose.trigger('click');
         }
     }
 
@@ -496,7 +496,7 @@ function CheckoutForm(data,host,csrf) {
             <button id="purchaseButton" class="btn btn-rsvp btn-rsvp-submit">Pay now</button>
             <button id="cancelButton" class="btn btn-rsvp btn-rsvp-reset">Cancel</button>        
         </div>
-        <a href="https://stripe.com"><img class="stripe-logo" src="/images/stripe/stripe-black.svg"></a>
+        <a href="https://stripe.com"><img alt="Powered by Stripe" class="stripe-logo" src="/images/stripe/stripe-black.svg"></a>
         `;
     }
 
