@@ -15,11 +15,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/api/**").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/**").authenticated()
+                .antMatchers(HttpMethod.PUT,"/api/**").authenticated()
+                .antMatchers(HttpMethod.PATCH,"/api/**").authenticated()
+                .antMatchers(HttpMethod.DELETE,"/api/**").authenticated()
+                .antMatchers(HttpMethod.GET,"/api/**").permitAll()
                 .antMatchers("/**").permitAll();
-
-//        http.csrf().disable();
-
-//        http.cors().disable();
     }
 }
