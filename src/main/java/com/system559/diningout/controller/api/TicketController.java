@@ -5,7 +5,6 @@ import com.system559.diningout.exception.RecordIdNotFoundException;
 import com.system559.diningout.model.Ticket;
 import com.system559.diningout.repository.GuestRepository;
 import com.system559.diningout.repository.TicketRepository;
-import com.system559.diningout.repository.TicketTierRepository;
 import com.system559.diningout.service.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,20 +14,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/ticket")
 public class TicketController {
-    private DtoMapper dtoMapper;
-    private GuestRepository guestRepository;
-    private TicketRepository ticketRepository;
-    private TicketTierRepository ticketTierRepository;
+    private final DtoMapper dtoMapper;
+    private final GuestRepository guestRepository;
+    private final TicketRepository ticketRepository;
 
     @Autowired
     public TicketController(DtoMapper dtoMapper,
                             GuestRepository guestRepository,
-                            TicketRepository ticketRepository,
-                            TicketTierRepository ticketTierRepository) {
+                            TicketRepository ticketRepository) {
         this.dtoMapper = dtoMapper;
         this.guestRepository = guestRepository;
         this.ticketRepository = ticketRepository;
-        this.ticketTierRepository = ticketTierRepository;
     }
 
     @GetMapping

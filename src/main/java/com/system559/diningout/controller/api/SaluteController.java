@@ -1,9 +1,7 @@
 package com.system559.diningout.controller.api;
 
-import com.system559.diningout.dto.GradeDto;
 import com.system559.diningout.dto.SaluteDto;
 import com.system559.diningout.exception.RecordIdNotFoundException;
-import com.system559.diningout.model.Grade;
 import com.system559.diningout.model.Salute;
 import com.system559.diningout.repository.SaluteRepository;
 import com.system559.diningout.service.DtoMapper;

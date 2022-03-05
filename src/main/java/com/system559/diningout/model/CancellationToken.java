@@ -1,6 +1,5 @@
 package com.system559.diningout.model;
 
-import com.system559.diningout.controller.cancel.CancelController;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
