@@ -80,6 +80,11 @@ function FormManager(host, csrf) {
         await showForm();
     }
 
+    this.clear = function() {
+        guestIndex = 0;
+        guestDtos.length = 0;
+    }
+
     async function showForm() {
         $('.loader-frame').removeClass('hidden');
 
