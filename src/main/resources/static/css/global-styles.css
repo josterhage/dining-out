@@ -144,13 +144,13 @@ main .body-text {
 footer {
     width: 100%;
     background-color: black;
-    color:gray;
-    padding-top:1rem;
+    color: gray;
+    padding-top: 1rem;
 }
 
 footer a {
-    color:#b5c7f8;
-    text-decoration:none;
+    color: #b5c7f8;
+    text-decoration: none;
 }
 
 footer a:hover {
@@ -301,16 +301,16 @@ img.centered {
 .btn-big {
     background-color: transparent;
     border: 20px solid transparent;
-    color:gold;
-    font-size:3rem;
-    margin:2rem auto;
-    width:fit-content;
-    height:fit-content;
-    padding:0.25rem;
+    color: gold;
+    font-size: 3rem;
+    margin: 2rem auto;
+    width: fit-content;
+    height: fit-content;
+    padding: 0.25rem;
 }
 
 .btn-big:hover {
-    border:20px solid;
+    border: 20px solid;
     border-image: url('/images/lines/deco-border2-gold.svg');
     border-image-slice: 31% 12%;
 }
@@ -567,27 +567,35 @@ img.icon-meals {
 }
 
 table tr {
-    margin:.5rem;
+    margin: .5rem;
 }
 
 table th {
     border-bottom: 1px solid gray;
-    text-align:left;
+    text-align: left;
 }
 
 table td, table th {
-    padding:0.5rem;
+    padding: 0.5rem;
 }
 
 table tr > td:last-of-type {
-    text-align:right;
+    text-align: right;
 }
 
 img.stripe-logo {
-    position:absolute;
-    bottom:0.5rem;
-    right:0.5rem;
-    max-width:160px;
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    max-width: 160px;
+}
+
+.modal {
+    position: fixed;
+    border-radius: 0.25rem;
+    background-color: white;
+    z-index: 3;
+    border: 1px solid lightgray;
 }
 
 /* stripe-specific styling */
@@ -772,6 +780,13 @@ button.btn-stripe:disabled {
     .flex-row {
         flex-direction: row;
     }
+
+    .modal {
+        top:30vh;
+        left:40vw;
+        width:20vw;
+        height:fit-content;
+    }
 }
 
 @media screen and (min-width: 768px) and (max-width: 1023px) {
@@ -901,6 +916,13 @@ button.btn-stripe:disabled {
 
     .flex-row {
         flex-direction: column;
+    }
+
+    .modal {
+        top:10vh;
+        left:5vw;
+        width:90vw;
+        height:fit-content;
     }
 }
 
