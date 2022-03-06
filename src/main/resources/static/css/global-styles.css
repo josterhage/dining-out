@@ -1,5 +1,3 @@
-@import url('http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext');
-
 @font-face {
     font-family: ParkLane;
     src: url("/fonts/ParkLaneNF.otf") format("opentype");
@@ -14,7 +12,7 @@
     font-family: Semplicita;
     font-style: normal;
     font-weight: normal;
-    src: url("/fonts/Semplicita\ Medium.otf");
+    src: url("/fonts/Semplicita Medium.otf");
 }
 
 /* global variables */
@@ -28,7 +26,7 @@
     --alt-ui: gold;
 
     --pri-text: gold;
-    --alt-text: black;
+    --alt-text-color: black;
 
     /* text colors */
     --text-dark: black;
@@ -73,10 +71,9 @@
 * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
-    -o-box-sizing: border-box;
     box-sizing: border-box;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 
 /* top-level styling */
@@ -92,7 +89,7 @@ body {
 .outer-container {
     display: flex;
     flex-direction: column;
-    gap: 0px;
+    gap: 0;
     width: 100%;
     height: 100vh;
     /* inner elements handle their own overflow */
@@ -123,7 +120,7 @@ header ul * {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 0px;
+    gap: 0;
 }
 
 main {
@@ -138,19 +135,19 @@ main .body-text {
     font-size: 2.5rem;
     display: flex;
     flex-direction: column;
-    font-family: Semplicita;
+    font-family: Semplicita, sans-serif;
 }
 
 footer {
     width: 100%;
     background-color: black;
-    color:gray;
-    padding-top:1rem;
+    color: gray;
+    padding-top: 1rem;
 }
 
 footer a {
-    color:#b5c7f8;
-    text-decoration:none;
+    color: #b5c7f8;
+    text-decoration: none;
 }
 
 footer a:hover {
@@ -175,7 +172,7 @@ footer a:hover {
 .btn-primary {
     background-color: white;
     border: 12px solid;
-    border-image: url('/images/lines/deco-border1-black.svg');
+    border-image-source: url('/images/lines/deco-border1-black.svg');
     border-image-slice: 23% 9%;
     color: var(--pri-bg);
 }
@@ -205,12 +202,12 @@ footer a:hover {
 
 .btn-hollow:hover {
     border: 12px solid;
-    border-image: url('/images/lines/deco-border1-black.svg');
+    border-image-source: url('/images/lines/deco-border1-black.svg');
     border-image-slice: 23% 9%;
 }
 
 .btn-submit, .btn-reset {
-    font-family: Semplicita;
+    font-family: Semplicita, sans-serif;
     padding: .5rem;
     border-radius: .5rem;
 }
@@ -301,17 +298,17 @@ img.centered {
 .btn-big {
     background-color: transparent;
     border: 20px solid transparent;
-    color:gold;
-    font-size:3rem;
-    margin:2rem auto;
-    width:fit-content;
-    height:fit-content;
-    padding:0.25rem;
+    color: gold;
+    font-size: 3rem;
+    margin: 2rem auto;
+    width: fit-content;
+    height: fit-content;
+    padding: 0.25rem;
 }
 
 .btn-big:hover {
-    border:20px solid;
-    border-image: url('/images/lines/deco-border2-gold.svg');
+    border: 20px solid;
+    border-image-source: url('/images/lines/deco-border2-gold.svg');
     border-image-slice: 31% 12%;
 }
 
@@ -367,8 +364,6 @@ img.centered {
 
 .dropdown .dropdown-menu {
     max-height: 7rem;
-    margin-right: -.4rem;
-    margin-bottom: .5rem;
     overflow-y: auto;
     border: 1px solid var(--ui-light);
     padding: 0 1rem 1rem 1rem;
@@ -407,7 +402,7 @@ img.centered {
 
 .form-body {
     position: absolute;
-    top: 0px;
+    top: 0;
     height: 100%;
     width: 100%;
     background-color: rgba(10, 10, 10, 0.6);
@@ -423,7 +418,7 @@ img.centered {
     background-color: white;
     padding: 1rem;
     color: Black;
-    font-family: Semplicita;
+    font-family: Semplicita, sans-serif;
     font-size: 1.25rem;
     overflow-y: auto;
     z-index: 2;
@@ -496,7 +491,7 @@ img.centered {
 
 .card {
     border: 24px solid;
-    border-image: url("/images/lines/deco-border2-gold.svg");
+    border-image-source: url("/images/lines/deco-border2-gold.svg");
     border-image-slice: 96;
     box-sizing: content-box;
 }
@@ -510,15 +505,25 @@ img.centered {
     background-color: rgba(10, 10, 10, 0.6);
 }
 
-.loader-frame .loader {
+.form-loader {
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color:rgba(10,10,10,0.6);
+    overflow: hidden;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader {
     border: 16px solid #f3f3f3;
     border-top: 16px solid #3498db;
     border-radius: 50%;
     width: 120px;
     height: 120px;
-    position: absolute;
-    left: calc(calc(100vw / 2) - 60px);
-    top: calc(calc(100vh / 2) - 60px);
     animation: spin 2s linear infinite;
 }
 
@@ -567,27 +572,35 @@ img.icon-meals {
 }
 
 table tr {
-    margin:.5rem;
+    margin: .5rem;
 }
 
 table th {
     border-bottom: 1px solid gray;
-    text-align:left;
+    text-align: left;
 }
 
 table td, table th {
-    padding:0.5rem;
+    padding: 0.5rem;
 }
 
 table tr > td:last-of-type {
-    text-align:right;
+    text-align: right;
 }
 
 img.stripe-logo {
-    position:absolute;
-    bottom:0.5rem;
-    right:0.5rem;
-    max-width:160px;
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    max-width: 160px;
+}
+
+.modal {
+    position: fixed;
+    border-radius: 0.25rem;
+    background-color: white;
+    z-index: 3;
+    border: 1px solid lightgray;
 }
 
 /* stripe-specific styling */
@@ -595,8 +608,8 @@ form#payment-form {
     width: 30vw;
     min-width: 500px;
     align-self: center;
-    box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
-    0px 2px 5px 0px rgba(50, 50, 93, 0.1), 0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
+    box-shadow: 0 0 0 0.5px rgba(50, 50, 93, 0.1),
+    0 2px 5px 0 rgba(50, 50, 93, 0.1), 0 1px 1.5px 0 rgba(0, 0, 0, 0.07);
     border-radius: 7px;
     padding: 40px;
 }
@@ -625,7 +638,7 @@ button.btn-stripe {
     cursor: pointer;
     display: block;
     transition: all 0.2s ease;
-    box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
+    box-shadow: 0 4px 5.5px 0 rgba(0, 0, 0, 0.07);
     width: 100%;
 }
 
@@ -648,12 +661,11 @@ button.btn-stripe:disabled {
     color: #ffffff;
     font-size: 22px;
     text-indent: -99999px;
-    margin: 0px auto;
+    margin: 0 auto;
     position: relative;
     width: 20px;
     height: 20px;
     box-shadow: inset 0 0 0 2px;
-    -webkit-transform: translateZ(0);
     -ms-transform: translateZ(0);
     transform: translateZ(0);
 }
@@ -684,30 +696,26 @@ button.btn-stripe:disabled {
     border-radius: 0 10.2px 10.2px 0;
     top: -0.1px;
     left: 10.2px;
-    -webkit-transform-origin: 0px 10.2px;
-    transform-origin: 0px 10.2px;
+    -webkit-transform-origin: 0 10.2px;
+    transform-origin: 0 10.2px;
     -webkit-animation: loading 2s infinite ease;
     animation: loading 2s infinite ease;
 }
 
 @-webkit-keyframes loading {
     0% {
-        -webkit-transform: rotate(0deg);
         transform: rotate(0deg);
     }
     100% {
-        -webkit-transform: rotate(360deg);
         transform: rotate(360deg);
     }
 }
 
 @keyframes loading {
     0% {
-        -webkit-transform: rotate(0deg);
         transform: rotate(0deg);
     }
     100% {
-        -webkit-transform: rotate(360deg);
         transform: rotate(360deg);
     }
 }
@@ -771,6 +779,13 @@ button.btn-stripe:disabled {
 
     .flex-row {
         flex-direction: row;
+    }
+
+    .modal {
+        top:30vh;
+        left:40vw;
+        width:20vw;
+        height:fit-content;
     }
 }
 
@@ -901,6 +916,13 @@ button.btn-stripe:disabled {
 
     .flex-row {
         flex-direction: column;
+    }
+
+    .modal {
+        top:10vh;
+        left:5vw;
+        width:90vw;
+        height:fit-content;
     }
 }
 

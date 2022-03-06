@@ -5,8 +5,6 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 
-import java.math.BigDecimal;
-
 @Data
 @Builder
 public class TicketTier {

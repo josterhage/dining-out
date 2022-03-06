@@ -2,7 +2,6 @@ package com.system559.diningout.controller.cancel;
 
 import com.stripe.exception.StripeException;
 import com.system559.diningout.service.CancellationService;
-import com.system559.diningout.service.CheckoutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;

@@ -63,9 +63,9 @@
 
 
     <footer class="text-center" style="color:lightgray">
-        This is not an official DOD or Army web Site.<br/>
+        This is not an official DOD or Army website.<br/>
         All payment information is processed by <a href="https://stripe.com">Stripe</a>.<br/>
-        Site design by <a href="mailto:josterhage@system559.com">James Osterhage</a>.
+        Site design by James Osterhage.
     </footer>
 
     <div class="loader-frame hidden">
@@ -85,7 +85,7 @@
         header: $("meta[name='_csrf_header']").attr("content")
     }
 
-    let slideShow = new SlideShow(['images/263303036_265475378946822_6199204000457916659_n.jpg', 'images/111th_MI_BDE_Patch.svg'], 5);
+    // let slideShow = new SlideShow(['images/263303036_265475378946822_6199204000457916659_n.jpg', 'images/111th_MI_BDE_Patch.svg'], 5);
     let textNavigator = new TextNavigator(host);
     let formManager = new FormManager(host,csrf);
 
@@ -124,49 +124,6 @@
             window.location = 'https://111th-dining-out.system559.com';
         })
 
-    })
-
-    function countDown() {
-        count--;
-        $('#countDown').html(count);
-        if (count === 0) {
-            $('#getTicketsFormClose').trigger('click');
-        }
-    }
-</script>
-
-<script th:if="${confirmed}" th:inline="javascript">
-
-    let count = 5;
-    let grade = /*[[${grade}]]*/ "";
-    let firstName = /*[[${firstName}]]*/ "unnamed";
-    let lastName = /*[[${lastName}]]*/ "guest";
-    let email = /*[[${email}]]*/ "no@no.com";
-    let intervalId;
-
-    $(document).ready(function () {
-        $('#getTicketsFormHolder').html(`
-        <div class="form-body">
-        <div class="form-box">
-        <h3 class="safari-flex-fix">Thank You!</h3>
-        <button class="btn btn-form-close" id="getTicketsFormClose">
-            <i class="fa-solid fa-times"></i>
-        </button>
-        <div class="half-spacer"></div>
-        <div class="text-med">
-            Thank you ${grade} ${firstName} ${lastName}, for confirming your 111th MI BDE Dining out reservation.
-            <div class="half-spacer"></div>
-            <div class="flex-row text-sm">
-                This dialog will close in <span id="countDown"></span> seconds.<br/>
-            </div>
-        </div>
-    `);
-
-        intervalId = setInterval(countDown, 1000);
-
-        $('#getTicketsFormClose').on('click', function () {
-           window.location = 'https://111th-dining-out.system559.com';
-        })
     })
 
     function countDown() {

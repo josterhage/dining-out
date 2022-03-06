@@ -16,7 +16,7 @@ function TextNavigator(baseUrl) {
         lastClicked = 'home';
     });
 
-    async function onHomeClick(e){
+    async function onHomeClick(){
         $('main').html(await getView('home'));
         updateClicks();
         $('nav-home').off('click',onHomeClick);
@@ -24,7 +24,7 @@ function TextNavigator(baseUrl) {
         lastClicked = 'home';
     }
 
-    async function onSequenceClick(e) {
+    async function onSequenceClick() {
         $('main').html(await getView('sequence'));
         updateClicks();
         $('nav-home').off('click',onSequenceClick);
@@ -32,21 +32,21 @@ function TextNavigator(baseUrl) {
         sequenceNavigation = new SequenceNavigator();
     }
 
-    async function onMenuClick(e) {
+    async function onMenuClick() {
         $('main').html(await getView('menu'));
         updateClicks();
         $('nav-menu').off('click',onMenuClick);
         lastClicked = 'home';
     }
 
-    async function onLocationClick(e) {
+    async function onLocationClick() {
         $('main').html(await getView('location'));
         updateClicks();
         $('nav-location').off('click',onLocationClick);
         lastClicked = 'home';
     }
 
-    async function onDressClick(e) {
+    async function onDressClick() {
         $('main').html(await getView('dress'));
         updateClicks();
         $('nav-dress').off('click',onDressClick);
@@ -73,21 +73,13 @@ function TextNavigator(baseUrl) {
         }
     }
 
-    function onBuyClick(e) {
-        // ???
-    }
-
-    this.getView = async function(viewName) {
-        return getView(viewName);
-    }
-
     async function getView(viewName) {
         const requestUrl = viewUrl + viewName;
 
-        let data = await Promise.resolve($.ajax({
+        let data = await $.ajax({
             url: requestUrl,
             type: 'get'
-        }));
+        });
 
         return $('<div></div>').html($(data)).find(`#main-${viewName}`);
     }

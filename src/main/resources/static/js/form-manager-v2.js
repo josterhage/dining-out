@@ -12,11 +12,9 @@ function FormManager(host, csrf) {
 
     let guestDtos = [];
 
-    let guestIndex = 1;
+    let guestIndex;
 
-    this.guestIndex = function () {
-        return guestIndex;
-    }
+    let unitOptions = "";
 
     const civGrades = [
         'WS/WG5',
@@ -72,17 +70,18 @@ function FormManager(host, csrf) {
 
     $(document).ready(function () {
 
-        $('#getTicketsButton').on('click', showForm);
-        $('#bigBuyNow').on('click',showForm);
+        init().then(() => {
+            $('#getTicketsButton').on('click', showForm);
+            $('#bigBuyNow').on('click', showForm);
+        });
     })
 
     this.showForm = async function() {
         await showForm();
     }
-
-    async function showForm() {
-        $('.loader-frame').removeClass('hidden');
-
+    async function init() {
+        guestDtos.length = 0;
+        guestIndex = 1;
         grades = await $.ajax({
             url: host + '/api/grade',
             type: 'get'
@@ -100,15 +99,16 @@ function FormManager(host, csrf) {
             type: 'get'
         })
 
-        let unitOptions = "";
-
         units.forEach(function (value) {
             unitOptions = unitOptions +
                 `<option value="${value['name']}">${value['name']}</option>`;
         })
+    }
 
+    function showForm() {
+        guestDtos.length = 0;
+        guestIndex = 1;
         $('#getTicketsFormHolder').html(formOutline);
-        $('.loader-frame').addClass('hidden');
         $('#getTicketsFormClose').on('click', closeForm);
         $('#unit').append(unitOptions);
         $('#guestContainer').append(createGuestBlock(guestIndex));
@@ -132,6 +132,12 @@ function FormManager(host, csrf) {
 
         inputFieldsToDtos();
 
+        $('.form-box').append(`
+        <div class="form-loader">
+            <div class="loader"></div>
+        </div>
+        `)
+
         $.ajax({
             url: rsvpStartPath,
             method: 'POST',
@@ -143,25 +149,31 @@ function FormManager(host, csrf) {
             success: function(data) {
                 checkoutForm = new CheckoutForm(data,host,csrf);
                 guestIndex = 1;
+                $('.form-loader').remove();
             }
         })
+
     }
 
-    function doReset(e) {
+    function doReset() {
+        const $unitValidation = $('#unitValidation');
+        const $emailValidation = $('#emailValidation');
+        const $removeGuest = $('#removeGuest');
         for (let i = 2; i <= guestIndex; i++) {
             $(`#guest${i}`).remove();
         }
 
-        $('#unitValidation').addClass('validation-spacer');
-        $('#unitValidation').removeClass('validation-danger');
-        $('#emailValidation').addClass('validation-spacer');
-        $('#emailValidation').removeClass('validation-danger');
+        $unitValidation.addClass('validation-spacer');
+        $unitValidation.removeClass('validation-danger');
+        $emailValidation.addClass('validation-spacer');
+        $emailValidation.removeClass('validation-danger');
         requiredFields.forEach(function (value) {
-            $(`#guest1${value}Validation`).addClass('validation-spacer');
-            $(`#guest1${value}Validation`).removeClass('validation-danger');
+            let $fieldValidation =$(`#guest1${value}Validation`);
+            $fieldValidation.addClass('validation-spacer');
+            $fieldValidation.removeClass('validation-danger');
         })
-        $('#removeGuest').addClass('hidden');
-        $('#removeGuest').off('click', removeGuest);
+        $removeGuest.addClass('hidden');
+        $removeGuest.off('click', removeGuest);
         guestIndex = 1;
     }
 
@@ -170,8 +182,9 @@ function FormManager(host, csrf) {
         $('#guestContainer').append(createGuestBlock(guestIndex));
         $(`#guest${guestIndex}grade`).on('change',{id: guestIndex}, gradeChanged)
         if (guestIndex === 2) {
-            $('#removeGuest').removeClass('hidden');
-            $('#removeGuest').on('click', removeGuest);
+            const $removeGuest = $('#removeGuest');
+            $removeGuest.removeClass('hidden');
+            $removeGuest.on('click', removeGuest);
         }
     }
 
@@ -182,8 +195,9 @@ function FormManager(host, csrf) {
         $(`#guest${guestIndex}`).remove();
         guestIndex--;
         if (guestIndex === 1) {
-            $('#removeGuest').addClass('hidden');
-            $('#removeGuest').off('click', removeGuest);
+            let $removeGuest =$('#removeGuest');
+            $removeGuest.addClass('hidden');
+            $removeGuest.off('click', removeGuest);
         }
     }
 
@@ -191,7 +205,6 @@ function FormManager(host, csrf) {
         let gradeOptions;
         let mealOptions;
         let saluteOptions;
-        let unitOptions;
 
         grades.forEach(function (value) {
             gradeOptions = gradeOptions +
@@ -281,20 +294,22 @@ function FormManager(host, csrf) {
 
     function validate() {
         let valid = true;
+        const $unit = $('#unit');
+        const $guestEmail = $('#guestEmail');
         //check for a unit
-        if ($('#unit').val() === null) {
+        if ($unit.val() === null) {
             let $element = $('#unitValidation');
             $element.addClass('validation-danger');
             $element.removeClass('validation-spacer');
-            $('#unit').on('change',{field: '#unit'},fieldChanged);
+            $unit.on('change',{field: '#unit'},fieldChanged);
             valid = false;
         }
 
-        if ($('#guestEmail').val() === "") {
+        if ($guestEmail.val() === "") {
             let $element = $('#emailValidation');
             $element.addClass('validation-danger');
             $element.removeClass('validation-spacer');
-            $('#guestEmail').on('change',{field: '#email'},fieldChanged);
+            $guestEmail.on('change',{field: '#email'},fieldChanged);
             valid=false;
         }
         for (let i = 1; i <= guestIndex; i++) {
@@ -322,7 +337,7 @@ function FormManager(host, csrf) {
 
     function missingFieldsModal() {
         $('body').append(`
-        <div id="modal" style="position:fixed; top:30vh; left:40vw; width:20vw; height:fit-content; border-radius:0.25rem; background-color:white; z-index:3; border: 1px solid lightgray">
+        <div id="modal" class="modal">
             <button id="modalClose" class="btn btn-form-close">
             <i class="fa-solid fa-times"></i>
             </button>
@@ -364,9 +379,8 @@ function CheckoutForm(data,host,csrf) {
     //TODO: is there a better way to stor this?
     const pk = "pk_test_51KWNNWJnsiIlHanEhOtLOJSQJKtKqWx4mnXbMkmgrc2kEziYGVgfJlIa4esgsfrBaUhUbl8JQmOVVUFsTZ6Z2zii00asZ54jj1"
     const abortPath = host + '/rsvp/abort/';
-    const createIntentPath = host + '/checkout/create-payment-intent/';
-    const $formDiv = $('#rsvpForm');
     const $formHolder = $('#formHolder');
+    const $getTicketsFormClose = $('#getTicketsFormClose');
 
     let stripe;
     let elements;
@@ -374,7 +388,7 @@ function CheckoutForm(data,host,csrf) {
     let intervalId;
 
     const paymentForm = `
-    <form id="payment-form">
+    <form id="payment-form" style="margin:auto;">
         <div id="payment-element">
         </div>
         <button id="submit" class="btn-stripe">
@@ -396,13 +410,20 @@ function CheckoutForm(data,host,csrf) {
     `;
 
     //starting
-    $formDiv.html(buildCheckoutForm());
+    $formHolder.html(buildCheckoutForm());
     $('#purchaseButton').on('click',purchaseClicked);
     $('#cancelButton').on('click',cancelClicked);
+    $getTicketsFormClose.on('click',cancelClicked);
 
     async function purchaseClicked(e) {
         e.preventDefault();
-        $formDiv.html(paymentForm);
+        $formHolder.html(paymentForm);
+
+        $('.form-box').append(`
+        <div class="form-loader">
+            <div class="loader"></div>
+        </div>
+        `)
 
         stripe = new Stripe(pk);
         $('#submit').on('click',handleSubmit);
@@ -414,9 +435,11 @@ function CheckoutForm(data,host,csrf) {
 
         const paymentElement = elements.create("payment");
         paymentElement.mount("#payment-element");
+        paymentElement.on('ready',() => {$('.form-loader').remove();});
         //if the paymentelement doesn't get mounted in 15 seconds, try again
-        let elementMountTimerId = createInterval(() => {
+        let elementMountTimerId = setInterval(() => {
             if(!$.trim($("#payment-element").html())) {
+                showMessage("It's taking longer than usual to load the payment form");
                 paymentElement.unmount();
                 paymentElement.mount('#payment-element');
             } else {
@@ -433,11 +456,11 @@ function CheckoutForm(data,host,csrf) {
             beforeSend: function (xhr) {
                 xhr.setRequestHeader(csrf['header'],csrf['token']);
             },
-            success: function (data) {
+            success: function () {
                 $formHolder.html(aborted);
                 $('#close-countdown').html(closeTime);
                 intervalId=setInterval(closeTimer,1000);
-                $('#getTicketsFormClose').on('click', function() {
+                $getTicketsFormClose.on('click', function() {
                     clearInterval(intervalId);
                 })
             }
@@ -448,14 +471,14 @@ function CheckoutForm(data,host,csrf) {
         closeTime--;
         $('#close-countdown').html(closeTime);
         if(closeTime === 0) {
-            $('#getTicketsFormClose').trigger('click');
+            $getTicketsFormClose.trigger('click');
         }
     }
 
     function buildCheckoutForm() {
         let price = (data['tierPrice'] * data['quantity'] / 100).toFixed(2);
         let fee = (data['fee'] / 100).toFixed(2);
-        let total = ((price + data['fee']) /100).toFixed(2);
+        let total = (((data['tierPrice'] * data['quantity']) + data['fee']) /100).toFixed(2);
 
         return `
         <div class="flex-row">
@@ -489,7 +512,7 @@ function CheckoutForm(data,host,csrf) {
             <button id="purchaseButton" class="btn btn-rsvp btn-rsvp-submit">Pay now</button>
             <button id="cancelButton" class="btn btn-rsvp btn-rsvp-reset">Cancel</button>        
         </div>
-        <a href="https://stripe.com"><img class="stripe-logo" src="/images/stripe/stripe-black.svg"></a>
+        <a href="https://stripe.com"><img alt="Powered by Stripe" class="stripe-logo" src="/images/stripe/stripe-black.svg"></a>
         `;
     }
 

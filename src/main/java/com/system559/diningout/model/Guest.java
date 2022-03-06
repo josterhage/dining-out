@@ -1,6 +1,5 @@
 package com.system559.diningout.model;
 
-import com.mongodb.lang.Nullable;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -22,7 +21,6 @@ public class Guest {
     private Meal meal;
     private String requestText;
     private Unit unit;
-    @Indexed(unique = true)
     private String email;
     private List<String> partnerIds;
     private boolean isConfirmed;

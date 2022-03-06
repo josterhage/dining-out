@@ -5,7 +5,7 @@ $(document).ready(function () {
     $hamburger.insertBefore('.navbar.collapsable');
 
     $('.btn-hamburger').on('click', function () {
-        $navbar = $(this).parent().find('.navbar.collapsable');
+        let $navbar = $(this).parent().find('.navbar.collapsable');
 
         if ($navbar.css('display') === 'none') {
             $navbar.css('display', 'block');

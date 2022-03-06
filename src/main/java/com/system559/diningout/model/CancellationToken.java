@@ -1,6 +1,5 @@
 package com.system559.diningout.model;
 
-import com.system559.diningout.controller.cancel.CancelController;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -14,9 +13,17 @@ public class CancellationToken {
     @Indexed(unique = true)
     private String token;
     private Ticket ticket;
+    private long created;
+
+    private static long timeToLive = 900L;
 
     public CancellationToken(Ticket ticket) {
         this.ticket = ticket;
         token = UUID.randomUUID().toString();
+        created = System.currentTimeMillis();
+    }
+
+    public boolean isExpired() {
+        return System.currentTimeMillis() - created > timeToLive;
     }
 }

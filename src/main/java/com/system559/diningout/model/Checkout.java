@@ -20,6 +20,7 @@ public class Checkout {
         created = System.currentTimeMillis();
     }
 
+    //TODO: Add a scheduled routine to check for expired checkouts and close them out
     public boolean isExpired() {
         return System.currentTimeMillis() - timeToLive > created;
     }
