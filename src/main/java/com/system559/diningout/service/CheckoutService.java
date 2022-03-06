@@ -149,7 +149,7 @@ public class CheckoutService {
     }
 
     @Scheduled(fixedDelay = 900000)
-    private void clearStaleCheckouts(){
+    public void clearStaleCheckouts(){
         List<Checkout> allCheckouts = checkoutRepository.findAll();
 
         for(Checkout checkout : allCheckouts) {
