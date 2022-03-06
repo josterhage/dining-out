@@ -21,7 +21,6 @@ public class Guest {
     private Meal meal;
     private String requestText;
     private Unit unit;
-    @Indexed(unique = true)
     private String email;
     private List<String> partnerIds;
     private boolean isConfirmed;
