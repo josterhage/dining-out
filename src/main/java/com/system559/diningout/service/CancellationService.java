@@ -13,6 +13,7 @@ import com.system559.diningout.repository.GuestRepository;
 import com.system559.diningout.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -61,5 +62,16 @@ public class CancellationService {
         Refund.create(params);
 
         tokenRepository.delete(token);
+    }
+
+    @Scheduled(fixedDelay = 1800000)
+    public void clearStaleCancellations() {
+        List<CancellationToken> tokens = tokenRepository.findAll();
+
+        for(CancellationToken token : tokens) {
+            if(token.isExpired()) {
+                tokenRepository.delete(token);
+            }
+        }
     }
 }
