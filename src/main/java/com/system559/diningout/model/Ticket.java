@@ -15,7 +15,6 @@ public class Ticket {
     private Guest guest;
     @Indexed(unique = true)
     private long ticketSerial;
-    @Indexed(unique = true)
     private String paymentIntent;
     private TicketTier ticketTier;
 }
