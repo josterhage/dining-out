@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -145,6 +146,21 @@ public class CheckoutService {
                         ticket.getId()));
 
         emailSenderService.sendEmail(message);
+    }
+
+    @Scheduled(fixedDelay = 900000)
+    private void clearStaleCheckouts(){
+        List<Checkout> allCheckouts = checkoutRepository.findAll();
+
+        for(Checkout checkout : allCheckouts) {
+            if(checkout.isExpired()) {
+                try {
+                    abortCheckout(checkout.getClientSecret());
+                } catch(StripeException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
     }
 
     public static TicketTier getTier(List<Guest> guests) {
