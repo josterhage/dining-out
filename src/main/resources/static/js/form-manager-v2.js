@@ -12,7 +12,7 @@ function FormManager(host, csrf) {
 
     let guestDtos = [];
 
-    let guestIndex = 1;
+    let guestIndex;
 
     let unitOptions = "";
 
@@ -79,8 +79,9 @@ function FormManager(host, csrf) {
     this.showForm = async function() {
         await showForm();
     }
-
     async function init() {
+        guestDtos.length = 0;
+        guestIndex = 1;
         grades = await $.ajax({
             url: host + '/api/grade',
             type: 'get'
