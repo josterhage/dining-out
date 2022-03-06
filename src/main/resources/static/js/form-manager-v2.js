@@ -106,6 +106,8 @@ function FormManager(host, csrf) {
     }
 
     function showForm() {
+        guestDtos.length = 0;
+        guestIndex = 1;
         $('#getTicketsFormHolder').html(formOutline);
         $('#getTicketsFormClose').on('click', closeForm);
         $('#unit').append(unitOptions);
