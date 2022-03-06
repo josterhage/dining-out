@@ -59,5 +59,7 @@ public class CancellationService {
         }
 
         Refund.create(params);
+
+        tokenRepository.delete(token);
     }
 }
