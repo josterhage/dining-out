@@ -14,6 +14,8 @@ function FormManager(host, csrf) {
 
     let guestIndex = 1;
 
+    let unitOptions = "";
+
     const civGrades = [
         'WS/WG5',
         'WS/WG6',
@@ -68,19 +70,17 @@ function FormManager(host, csrf) {
 
     $(document).ready(function () {
 
-        $('#getTicketsButton').on('click', showForm);
-        $('#bigBuyNow').on('click',showForm);
+        init().then(() => {
+            $('#getTicketsButton').on('click', showForm);
+            $('#bigBuyNow').on('click', showForm);
+        });
     })
 
     this.showForm = async function() {
         await showForm();
     }
 
-    async function showForm() {
-        const $loader = $('.loader-frame');
-        const $rsvpForm = $('#rsvpForm');
-        $loader.removeClass('hidden');
-
+    async function init() {
         grades = await $.ajax({
             url: host + '/api/grade',
             type: 'get'
@@ -98,21 +98,20 @@ function FormManager(host, csrf) {
             type: 'get'
         })
 
-        let unitOptions = "";
-
         units.forEach(function (value) {
             unitOptions = unitOptions +
                 `<option value="${value['name']}">${value['name']}</option>`;
         })
+    }
 
+    function showForm() {
         $('#getTicketsFormHolder').html(formOutline);
-        $loader.addClass('hidden');
         $('#getTicketsFormClose').on('click', closeForm);
         $('#unit').append(unitOptions);
         $('#guestContainer').append(createGuestBlock(guestIndex));
         $('#addGuest').on('click', addGuest);
-        $rsvpForm.on('submit', doSubmit);
-        $rsvpForm.on('reset', doReset);
+        $('#rsvpForm').on('submit', doSubmit);
+        $('#rsvpForm').on('reset', doReset);
         $(`#guest${guestIndex}grade`).on('change',{id: guestIndex}, gradeChanged)
     }
 
@@ -130,6 +129,12 @@ function FormManager(host, csrf) {
 
         inputFieldsToDtos();
 
+        $('.form-box').append(`
+        <div class="form-loader">
+            <div class="loader"></div>
+        </div>
+        `)
+
         $.ajax({
             url: rsvpStartPath,
             method: 'POST',
@@ -141,8 +146,10 @@ function FormManager(host, csrf) {
             success: function(data) {
                 checkoutForm = new CheckoutForm(data,host,csrf);
                 guestIndex = 1;
+                $('.form-loader').remove();
             }
         })
+
     }
 
     function doReset() {
@@ -409,6 +416,8 @@ function CheckoutForm(data,host,csrf) {
     async function purchaseClicked(e) {
         e.preventDefault();
         $formDiv.html(paymentForm);
+
+        $('#payment-element').append()
 
         stripe = new Stripe(pk);
         $('#submit').on('click',handleSubmit);
