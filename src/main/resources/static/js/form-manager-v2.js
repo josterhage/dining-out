@@ -374,9 +374,8 @@ function FormManager(host, csrf) {
 
 function CheckoutForm(data,host,csrf) {
     //TODO: is there a better way to stor this?
-    const pk = "pk_live_51KWNNWJnsiIlHanE8eznrW4yrpNUnQmcTqrrr0GpHkUVBvolCgERAqwMyrJ2MBtQEuasxwl3PhGpr0jKo0Uje6sB00aiNuRgcL"
+    const pk = "pk_test_51KWNNWJnsiIlHanEhOtLOJSQJKtKqWx4mnXbMkmgrc2kEziYGVgfJlIa4esgsfrBaUhUbl8JQmOVVUFsTZ6Z2zii00asZ54jj1"
     const abortPath = host + '/rsvp/abort/';
-    const $formDiv = $('#rsvpForm');
     const $formHolder = $('#formHolder');
     const $getTicketsFormClose = $('#getTicketsFormClose');
 
@@ -386,7 +385,7 @@ function CheckoutForm(data,host,csrf) {
     let intervalId;
 
     const paymentForm = `
-    <form id="payment-form">
+    <form id="payment-form" style="margin:auto;">
         <div id="payment-element">
         </div>
         <button id="submit" class="btn-stripe">
@@ -408,14 +407,20 @@ function CheckoutForm(data,host,csrf) {
     `;
 
     //starting
-    $formDiv.html(buildCheckoutForm());
+    $formHolder.html(buildCheckoutForm());
     $('#purchaseButton').on('click',purchaseClicked);
     $('#cancelButton').on('click',cancelClicked);
     $getTicketsFormClose.on('click',cancelClicked);
 
     async function purchaseClicked(e) {
         e.preventDefault();
-        $formDiv.html(paymentForm);
+        $formHolder.html(paymentForm);
+
+        $('.form-box').append(`
+        <div class="form-loader">
+            <div class="loader"></div>
+        </div>
+        `)
 
         stripe = new Stripe(pk);
         $('#submit').on('click',handleSubmit);
@@ -427,8 +432,9 @@ function CheckoutForm(data,host,csrf) {
 
         const paymentElement = elements.create("payment");
         paymentElement.mount("#payment-element");
+        paymentElement.on('ready',() => {$('.form-loader').remove();});
         //if the paymentelement doesn't get mounted in 15 seconds, try again
-        let elementMountTimerId = createInterval(() => {
+        let elementMountTimerId = setInterval(() => {
             if(!$.trim($("#payment-element").html())) {
                 showMessage("It's taking longer than usual to load the payment form");
                 paymentElement.unmount();
