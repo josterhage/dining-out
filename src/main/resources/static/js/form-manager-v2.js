@@ -417,8 +417,6 @@ function CheckoutForm(data,host,csrf) {
         e.preventDefault();
         $formDiv.html(paymentForm);
 
-        $('#payment-element').append()
-
         stripe = new Stripe(pk);
         $('#submit').on('click',handleSubmit);
 
