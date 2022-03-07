@@ -148,7 +148,7 @@ public class CheckoutService {
         emailSenderService.sendEmail(message);
     }
 
-    @Scheduled(fixedDelay = 900000)
+//    @Scheduled(fixedDelay = 900000)
     public void clearStaleCheckouts(){
         List<Checkout> allCheckouts = checkoutRepository.findAll();
 

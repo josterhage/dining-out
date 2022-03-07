@@ -64,7 +64,7 @@ public class CancellationService {
         tokenRepository.delete(token);
     }
 
-    @Scheduled(fixedDelay = 1800000)
+//    @Scheduled(fixedDelay = 1800000)
     public void clearStaleCancellations() {
         List<CancellationToken> tokens = tokenRepository.findAll();
 

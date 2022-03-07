@@ -86,23 +86,39 @@ function FormManager(host, csrf) {
         gradesReady = false;
         grades = await $.ajax({
             url: host + '/api/grade',
-            type: 'get'
-        }).then(() => {gradesReady = true;})
+            type: 'get',
+            success: function(data) {
+                gradesReady = true;
+                return data;
+            }
+        })
         mealsReady = false;
         meals = await $.ajax({
             url: host + '/api/meal',
-            type: 'get'
-        }).then(() => {mealsReady = true;})
+            type: 'get',
+            success: function(data) {
+                mealsReady = true;
+                return data;
+            }
+        })
         salutesReady = false;
         salutes = await $.ajax({
             url: host + '/api/salute',
-            type: 'get'
-        }).then(() => {salutesReady = true;})
+            type: 'get',
+            success: function(data) {
+                salutesReady = true;
+                return data;
+            }
+        })
         unitsReady = false;
         units = await $.ajax({
             url: host + '/api/unit',
-            type: 'get'
-        }).then(() => {unitsReady = true;})
+            type: 'get',
+            success: function(data) {
+                unitsReady = true;
+                return data;
+            }
+        })
 
         while(!unitsReady) {}
         units.forEach(function (value) {
