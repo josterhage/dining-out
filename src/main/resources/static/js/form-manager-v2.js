@@ -104,6 +104,7 @@ function FormManager(host, csrf) {
             type: 'get'
         }).then(() => {unitsReady = true;})
 
+        while(!unitsReady) {}
         units.forEach(function (value) {
             unitOptions = unitOptions +
                 `<option value="${value['name']}">${value['name']}</option>`;
@@ -122,7 +123,6 @@ function FormManager(host, csrf) {
         </div>
         `)
         }
-        while(!unitsReady) {}
         $('#unit').append(unitOptions);
         $('#guestContainer').append(createGuestBlock(guestIndex));
         $('#addGuest').on('click', addGuest);
