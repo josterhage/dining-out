@@ -2,6 +2,7 @@ function FormManager(host, csrf) {
     const rsvpStartPath = host + "/rsvp/start";
     let grades, meals, salutes, units;
     let checkoutForm;
+    let gradesReady,mealsReady,salutesReady,unitsReady,allReady;
 
     let requiredFields = [
         "firstName",
@@ -82,22 +83,26 @@ function FormManager(host, csrf) {
     async function init() {
         guestDtos.length = 0;
         guestIndex = 1;
+        gradesReady = false;
         grades = await $.ajax({
             url: host + '/api/grade',
             type: 'get'
-        })
+        }).then(() => {gradesReady = true;})
+        mealsReady = false;
         meals = await $.ajax({
             url: host + '/api/meal',
             type: 'get'
-        })
+        }).then(() => {mealsReady = true;})
+        salutesReady = false;
         salutes = await $.ajax({
             url: host + '/api/salute',
             type: 'get'
-        })
+        }).then(() => {salutesReady = true;})
+        unitsReady = false;
         units = await $.ajax({
             url: host + '/api/unit',
             type: 'get'
-        })
+        }).then(() => {unitsReady = true;})
 
         units.forEach(function (value) {
             unitOptions = unitOptions +
@@ -110,6 +115,14 @@ function FormManager(host, csrf) {
         guestIndex = 1;
         $('#getTicketsFormHolder').html(formOutline);
         $('#getTicketsFormClose').on('click', closeForm);
+        if(!gradesReady || !mealsReady || !salutesReady || !unitsReady) {
+            $('.form-box').append(`
+        <div class="form-loader">
+            <div class="loader"></div>
+        </div>
+        `)
+        }
+        while(!unitsReady) {}
         $('#unit').append(unitOptions);
         $('#guestContainer').append(createGuestBlock(guestIndex));
         $('#addGuest').on('click', addGuest);
@@ -206,20 +219,25 @@ function FormManager(host, csrf) {
         let mealOptions;
         let saluteOptions;
 
+        while(!gradesReady) {}
         grades.forEach(function (value) {
             gradeOptions = gradeOptions +
                 `<option value"${value['name']}">${value['name']}</option>`;
         })
 
+        while(!mealsReady) {}
         meals.forEach(function (value) {
             mealOptions = mealOptions +
                 `<option value="${value['name']}">${value['name']}</option>`;
         })
 
+        while(!salutesReady) {}
         salutes.forEach(function (value) {
             saluteOptions = saluteOptions +
                 `<option value="${value['name']}">${value['name']}</option>`;
         })
+
+        $('.form-loader').remove();
 
         return `
       <div id="guest${guestIndex}">
