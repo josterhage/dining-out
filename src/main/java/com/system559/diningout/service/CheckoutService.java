@@ -87,8 +87,6 @@ public class CheckoutService {
     public Guest confirmPayment(String paymentIntent, String clientSecret)  {
         Checkout checkout = checkoutRepository.findByClientSecret(clientSecret)
                 .orElseThrow(() -> new RecordNotFoundException("Checkout", "clientSecret", clientSecret));
-        checkoutRepository.delete(checkout);
-
         for(String guestId : checkout.getGuest().getPartnerIds()) {
             Guest guest = guestRepository.findById(guestId)
                     .orElseThrow(() -> new RecordIdNotFoundException("Guest",guestId));
@@ -99,6 +97,8 @@ public class CheckoutService {
         List<Ticket> tickets = ticketService.createTicket(checkout.getGuest(),paymentIntent);
         sendEmail(tickets.get(0));
 
+        // maybe if it's here the system will stop throwing a RNFE
+        checkoutRepository.delete(checkout);
         return checkout.getGuest();
     }
 
