@@ -557,7 +557,7 @@ function CheckoutForm(data,csrf) {
         const {error} = await stripe.confirmPayment({
             elements,
             confirmParams: {
-                return_url: '/checkout/success'
+                return_url: window.location.origin + '/checkout/success'
             }
         });
 
