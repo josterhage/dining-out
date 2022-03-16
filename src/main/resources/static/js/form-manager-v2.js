@@ -510,9 +510,49 @@ function CheckoutForm(data,csrf) {
     }
 
     function buildCheckoutForm() {
-        let price = (data['tierPrice'] * data['quantity'] / 100).toFixed(2);
-        let fee = (data['fee'] / 100).toFixed(2);
-        let total = (((data['tierPrice'] * data['quantity']) + data['fee']) /100).toFixed(2);
+        const fee = (data['fee'] / 100).toFixed(2);
+        const total = (((data['tierPrice'] * data['quantity']) + data['fee']) /100).toFixed(2);
+        const tiers = [
+            {
+                name: 'Soldier',
+                price: 1500,
+                quantity: 0
+            },
+            {
+                name: 'Junior Leader',
+                price: 2000,
+                quantity: 0
+            },
+            {
+                name: 'Company-Grade Leader 1',
+                price: 3000,
+                quantity: 0
+            },
+            {
+                name: 'Company-Grade Leader 2',
+                price: 4000,
+                quantity: 0
+            },
+            {
+                name: 'Senior Leader',
+                price: 5000,
+                quantity: 0
+            }
+        ]
+
+        let rows = "";
+
+        tiers.forEach((value) => {
+            if(data['ticketTiers'].name === value['name']) {
+                value['quantity']++;
+            }
+        })
+
+        tiers.forEach((value) => {
+            if(value['quantity'] > 0) {
+                rows += createCheckoutRow(value);
+            }
+        })
 
         return `
         <div class="flex-row">
@@ -525,11 +565,7 @@ function CheckoutForm(data,csrf) {
                 <th>Description</th>
                 <th>Price</th>
             </tr>
-            <tr>
-                <td>${data['quantity']}</td>
-                <td>${data['tierName']}</td>  
-                <td>${price}</td> 
-            </tr>
+            ${rows}
             <tr>
                 <td></td>
                 <td>Online payment fee</td>
@@ -548,6 +584,15 @@ function CheckoutForm(data,csrf) {
         </div>
         <a href="https://stripe.com"><img alt="Powered by Stripe" class="stripe-logo" src="/images/stripe/stripe-black.svg"></a>
         `;
+    }
+
+    function createCheckoutRow(data) {
+        return `
+        <tr>
+            <td>${data['quantity']}</td>
+            <td>${data['name']}</td>
+            <td>${(data['price']/100).toFixed(2)}</td>
+        </tr>`
     }
 
     async function handleSubmit(e) {
