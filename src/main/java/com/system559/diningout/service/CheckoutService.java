@@ -16,18 +16,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
 @Service("checkoutService")
 public class CheckoutService {
     private final CheckoutRepository checkoutRepository;
+    private final DtoMapper dtoMapper;
     private final EmailSenderService emailSenderService;
     private final GuestRepository guestRepository;
     private final TicketService ticketService;
@@ -38,10 +39,12 @@ public class CheckoutService {
 
     @Autowired
     public CheckoutService(CheckoutRepository checkoutRepository,
+                           DtoMapper dtoMapper,
                            EmailSenderService emailSenderService,
                            GuestRepository guestRepository,
                            TicketService ticketService) {
         this.checkoutRepository = checkoutRepository;
+        this.dtoMapper = dtoMapper;
         this.emailSenderService = emailSenderService;
         this.guestRepository = guestRepository;
         this.ticketService = ticketService;
@@ -53,11 +56,14 @@ public class CheckoutService {
             guests.add(guestRepository.findById(id)
                     .orElseThrow(() -> new RecordIdNotFoundException("Guest",id)));
         }
-        TicketTier tier = getTier(guests);
-        long price = tier.getPrice();
-        int quantity = guest.getPartnerIds().size();
-        long fee = Math.round((price * quantity) * 0.029) + 30;
-        long total = (price * quantity) + fee;
+
+        List<TicketTier> tiers = getTierList(guests);
+
+        long subtotal = getPurchaseSubtotal(tiers);
+
+        long fee = getCardFee(subtotal);
+
+        long total = subtotal + fee;
 
         Stripe.apiKey = stripeSk;
 
@@ -68,18 +74,30 @@ public class CheckoutService {
                         PaymentIntentCreateParams.AutomaticPaymentMethods
                                 .builder()
                                 .setEnabled(true)
-                                .build()
-                )
+                                .build())
                 .build();
+
         String clientSecret = PaymentIntent.create(params).getClientSecret();
+
         return CheckoutDto.builder()
                 .clientSecret(clientSecret)
-                .tierName(tier.getName())
-                .tierPrice(tier.getPrice())
-                .quantity(quantity)
+                .ticketTiers(tiers.stream().map(dtoMapper::ticketTierToDto).collect(Collectors.toList()))
                 .fee(fee)
+                .total(total)
                 .created(checkoutRepository.save(new Checkout(clientSecret, guest)).getCreated())
                 .build();
+    }
+
+    private long getPurchaseSubtotal(List<TicketTier> tiers) {
+        long subtotal = 0L;
+        for(TicketTier tier : tiers) {
+            subtotal += tier.getPrice();
+        }
+        return subtotal;
+    }
+
+    private long getCardFee(long subtotal) {
+        return Math.round(subtotal * 0.029) + 30;
     }
 
     public Guest confirmPayment(String paymentIntent, String clientSecret)  {
@@ -158,6 +176,20 @@ public class CheckoutService {
                 }
             }
         }
+    }
+
+    public static List<TicketTier> getTierList(List<Guest> guests) {
+        List<TicketTier> tiers = new ArrayList<>();
+        TicketTier topTier = getTier(guests);
+        for(Guest guest : guests) {
+            if(guest.getGrade().getName().equals("CIV")) {
+                tiers.add(topTier);
+            } else {
+                tiers.add(guest.getGrade().getTier());
+            }
+        }
+
+        return tiers;
     }
 
     public static TicketTier getTier(List<Guest> guests) {
