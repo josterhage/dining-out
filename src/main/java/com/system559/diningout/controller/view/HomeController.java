@@ -10,12 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/")
 public class HomeController {
-    @Value("${APPLICATION_HOST}")
-    private String appHost;
 
     @GetMapping("/")
-    public String homePage(Model model) {
-        model.addAttribute("appHost",appHost);
+    public String homePage() {
         return "index";
     }
 
