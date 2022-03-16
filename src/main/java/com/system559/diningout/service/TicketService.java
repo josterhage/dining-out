@@ -3,6 +3,7 @@ package com.system559.diningout.service;
 import com.system559.diningout.exception.RecordIdNotFoundException;
 import com.system559.diningout.model.*;
 import com.system559.diningout.repository.GuestRepository;
+import com.system559.diningout.repository.SaluteRepository;
 import com.system559.diningout.repository.TicketRepository;
 import com.system559.diningout.repository.TicketSerialRepository;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service("ticketService")
@@ -33,7 +35,7 @@ public class TicketService {
     public List<Ticket> createTicket(Guest guest, String paymentIntent) {
         List<Guest> guests =
                 guest.getPartnerIds().stream().map((id) -> guestRepository.findById(id)
-                        .orElseThrow(() -> new RecordIdNotFoundException("Guest",id))).collect(Collectors.toList());
+                        .orElseThrow(() -> new RecordIdNotFoundException("Guest", id))).collect(Collectors.toList());
         TicketTier tier = CheckoutService.getTier(guests);
 
         List<Ticket> tickets = new ArrayList<>();
@@ -62,7 +64,8 @@ public class TicketService {
     public static String getPersonAddress(Guest guest) {
         for (String grade : Grade.civilianGrades) {
             if (grade.equals(guest.getGrade().getName())) {
-                return guest.getSalute().getName();
+                // not every guest that should have a salute has one
+                return Objects.isNull(guest.getSalute()) ? "" : guest.getSalute().getName();
             }
         }
         return guest.getGrade().getName();
