@@ -411,7 +411,7 @@ function FormManager(csrf) {
 
 function CheckoutForm(data,csrf) {
     //TODO: is there a better way to stor this?
-    const pk = "pk_test_51KWNNWJnsiIlHanEhOtLOJSQJKtKqWx4mnXbMkmgrc2kEziYGVgfJlIa4esgsfrBaUhUbl8JQmOVVUFsTZ6Z2zii00asZ54jj1"
+    const pk = "pk_live_51KWNNWJnsiIlHanE8eznrW4yrpNUnQmcTqrrr0GpHkUVBvolCgERAqwMyrJ2MBtQEuasxwl3PhGpr0jKo0Uje6sB00aiNuRgcL"
     const abortPath = '/rsvp/abort/';
     const $formHolder = $('#formHolder');
     const $getTicketsFormClose = $('#getTicketsFormClose');
