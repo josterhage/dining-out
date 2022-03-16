@@ -83,6 +83,10 @@ public class DtoMapper {
                 .build();
     }
 
+    public TicketTierDto ticketTierToDto(TicketTier tier) {
+        return new TicketTierDto(tier.getName(),tier.getDescription(),tier.getPrice());
+    }
+
     public Unit dtoToUnit(UnitDto dto) {
         return Unit.builder()
                 .name(dto.getName())
