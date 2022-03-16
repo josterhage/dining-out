@@ -1,5 +1,5 @@
-function TextNavigator(baseUrl) {
-    const viewUrl = baseUrl + '/view/';
+function TextNavigator() {
+    const viewUrl = '/view/';
 
     let lastClicked;
     let sequenceNavigation;
