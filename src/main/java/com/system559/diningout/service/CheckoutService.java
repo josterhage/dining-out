@@ -35,8 +35,6 @@ public class CheckoutService {
 
     @Value("${STRIPE_SK}")
     private String stripeSk;
-    @Value("${APPLICATION_HOST}")
-    private String appHost;
 
     @Autowired
     public CheckoutService(CheckoutRepository checkoutRepository,
@@ -137,12 +135,11 @@ public class CheckoutService {
                 format("%s,\n" +
                                 "Thank you for buying your ticket(s) to the 111th MI BDE Dining Out.\n" +
                                 "Your confirmation number is %s.\n" +
-                                "If you need to cancel please go to %s/cancel/%s.\n" +
+                                "If you need to cancel please go to https://111th-dining-out.system559.com/cancel/%s.\n" +
                                 "Thanks,\n" +
                                 "The 111th Dining Out Team",
                         address,
                         ticket.getId(),
-                        appHost,
                         ticket.getId()));
 
         emailSenderService.sendEmail(message);
