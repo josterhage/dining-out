@@ -4,7 +4,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="appHost" th:content="${appHost}">
 
     <link href="/images/111th_MI_BDE_Patch.svg" rel="icon">
 
@@ -62,7 +61,7 @@
     <div class="form-box">
         <h3 class="safari-flex-fix">Cancellation</h3>
         <div class="flex-row text-med">We're sorry to hear that you wish to cancel your reservation. If you're certain that's what you want, click the button below to confirm.</div>
-        <form th:action="${appHost + '/cancel/confirmed/' + token}" method="post">
+        <form th:action="${'/cancel/confirmed/' + token}" method="post">
         <button class="btn btn-rsvp btn-rsvp-submit">Confirm</button>
         </form>
     </div>
