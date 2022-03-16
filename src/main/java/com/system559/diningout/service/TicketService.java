@@ -3,7 +3,6 @@ package com.system559.diningout.service;
 import com.system559.diningout.exception.RecordIdNotFoundException;
 import com.system559.diningout.model.*;
 import com.system559.diningout.repository.GuestRepository;
-import com.system559.diningout.repository.SaluteRepository;
 import com.system559.diningout.repository.TicketRepository;
 import com.system559.diningout.repository.TicketSerialRepository;
 import org.slf4j.Logger;
