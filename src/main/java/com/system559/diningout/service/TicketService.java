@@ -35,24 +35,23 @@ public class TicketService {
         List<Guest> guests =
                 guest.getPartnerIds().stream().map((id) -> guestRepository.findById(id)
                         .orElseThrow(() -> new RecordIdNotFoundException("Guest", id))).collect(Collectors.toList());
-        TicketTier tier = CheckoutService.getTier(guests);
+        List<TicketTier> tiers = CheckoutService.getTierList(guests);
 
         List<Ticket> tickets = new ArrayList<>();
 
-        for (Guest guestIteration : guests) {
-            logger.info(guestIteration.getMeal().getName());
+        for(int i = 0; i < guests.size(); i++) {
             tickets.add(Ticket.builder()
-                    .guest(guestIteration)
+                    .guest(guests.get(i))
                     .paymentIntent(paymentIntent)
-                    .ticketSerial(nextSerial())
-                    .ticketTier(tier)
+                    .ticketSerial(getNextTicketSerial())
+                    .ticketTier(tiers.get(i))
                     .build());
         }
 
         return ticketRepository.saveAll(tickets);
     }
 
-    private long nextSerial() {
+    private long getNextTicketSerial() {
         TicketSerial serial = ticketSerialRepository.findAll().get(0);
         long next = serial.getNextTicketSerial();
         serial.setNextTicketSerial(next + 1);
