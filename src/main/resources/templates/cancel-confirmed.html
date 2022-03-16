@@ -19,7 +19,6 @@
 </head>
 
 <body>
-<div class="darkener"></div>
 <header>
     <div class="navbar">
         <ul class="navbar collapsable">
@@ -41,7 +40,6 @@
         </ul>
 
         <button class="btn btn-primary" id="getTicketsButton">RSVP/Buy Tickets</button>
-        <!--            <button class="btn btn-primary" id="donateButton">Donate</button>-->
     </div>
 </header>
 
@@ -61,7 +59,7 @@
     <div class="form-box">
         <h3 class="safari-flex-fix">Cancellation</h3>
         <div class="flex-row text-med">Your reservation has been cancelled and your purchase (less the non-refundable processing fee) has been refunded. Your financial institution should reflect the refund in 5-10 business days.</div>
-        <div>You will be redirected to the Dining Out home page in <span id="countdown"></span> seconds.</div>
+        <div>You will be redirected to the event home page in <span id="countdown"></span> seconds.</div>
     </div>
 </div>
 
@@ -78,7 +76,7 @@
         count--;
         $('#countdown').html(count);
         if(count === 0) {
-            window.location = 'https://111th-dining-out.system559.com';
+            window.location = '/';
         }
     }
 </script>
