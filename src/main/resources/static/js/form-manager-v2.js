@@ -511,7 +511,7 @@ function CheckoutForm(data,csrf) {
 
     function buildCheckoutForm() {
         const fee = (data['fee'] / 100).toFixed(2);
-        const total = (((data['tierPrice'] * data['quantity']) + data['fee']) /100).toFixed(2);
+        const total = (data['total'] /100).toFixed(2);
         const tiers = [
             {
                 name: 'Soldier',
@@ -543,9 +543,7 @@ function CheckoutForm(data,csrf) {
         let rows = "";
 
         tiers.forEach((value) => {
-            if(data['ticketTiers'].name === value['name']) {
-                value['quantity']++;
-            }
+            value['quantity'] = data['ticketTiers'].filter(e => e.name === value['name']).length;
         })
 
         tiers.forEach((value) => {
