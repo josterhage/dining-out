@@ -1,5 +1,5 @@
-function FormManager(host, csrf) {
-    const rsvpStartPath = host + "/rsvp/start";
+function FormManager(csrf) {
+    const rsvpStartPath = "/rsvp/start";
     let grades, meals, salutes, units;
     let checkoutForm;
     let gradesReady,mealsReady,salutesReady,unitsReady,allReady;
@@ -85,7 +85,7 @@ function FormManager(host, csrf) {
         guestIndex = 1;
         gradesReady = false;
         grades = await $.ajax({
-            url: host + '/api/grade',
+            url: '/api/grade',
             type: 'get',
             success: function(data) {
                 gradesReady = true;
@@ -94,7 +94,7 @@ function FormManager(host, csrf) {
         })
         mealsReady = false;
         meals = await $.ajax({
-            url: host + '/api/meal',
+            url: '/api/meal',
             type: 'get',
             success: function(data) {
                 mealsReady = true;
@@ -103,7 +103,7 @@ function FormManager(host, csrf) {
         })
         salutesReady = false;
         salutes = await $.ajax({
-            url: host + '/api/salute',
+            url: '/api/salute',
             type: 'get',
             success: function(data) {
                 salutesReady = true;
@@ -112,7 +112,7 @@ function FormManager(host, csrf) {
         })
         unitsReady = false;
         units = await $.ajax({
-            url: host + '/api/unit',
+            url: '/api/unit',
             type: 'get',
             success: function(data) {
                 unitsReady = true;
@@ -176,7 +176,7 @@ function FormManager(host, csrf) {
                 xhr.setRequestHeader(csrf['header'],csrf['token']);
             },
             success: function(data) {
-                checkoutForm = new CheckoutForm(data,host,csrf);
+                checkoutForm = new CheckoutForm(data,csrf);
                 guestIndex = 1;
                 $('.form-loader').remove();
             }
@@ -409,10 +409,10 @@ function FormManager(host, csrf) {
     }
 }
 
-function CheckoutForm(data,host,csrf) {
+function CheckoutForm(data,csrf) {
     //TODO: is there a better way to stor this?
     const pk = "pk_test_51KWNNWJnsiIlHanEhOtLOJSQJKtKqWx4mnXbMkmgrc2kEziYGVgfJlIa4esgsfrBaUhUbl8JQmOVVUFsTZ6Z2zii00asZ54jj1"
-    const abortPath = host + '/rsvp/abort/';
+    const abortPath = '/rsvp/abort/';
     const $formHolder = $('#formHolder');
     const $getTicketsFormClose = $('#getTicketsFormClose');
 
@@ -557,7 +557,7 @@ function CheckoutForm(data,host,csrf) {
         const {error} = await stripe.confirmPayment({
             elements,
             confirmParams: {
-                return_url: host + '/checkout/success'
+                return_url: '/checkout/success'
             }
         });
 
