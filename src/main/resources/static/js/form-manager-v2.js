@@ -263,7 +263,7 @@ function FormManager(csrf) {
         <div class="flex-row mb-sm">
             <div class="flex-col">
                 <label for="guest${guestIndex}grade">Grade or Title: <br/>
-                    <span class="text-sm">(DA Civilians please choose your WG or GS Grade)</span>
+                    <span class="text-sm">(For civilian Family members please select "CIV" at the end of the list, DA Civilians please choose your WG or GS Grade)</span>
                 </label>
                 <select id="guest${guestIndex}grade">
                     <option value="" selected disabled hidden>Select a grade</option>
