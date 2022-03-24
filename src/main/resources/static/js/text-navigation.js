@@ -12,7 +12,9 @@ function TextNavigator() {
         $('#nav-dress').on('click',onDressClick);
 
         $('main').html(await getView('home'));
-        $('#bigBuyNow').on('click',formManager.showForm);
+        if(Date.now() < 1648105199000) {
+            $('#bigBuyNow').on('click', formManager.showForm);
+        }
         lastClicked = 'home';
     });
 
@@ -20,7 +22,11 @@ function TextNavigator() {
         $('main').html(await getView('home'));
         updateClicks();
         $('nav-home').off('click',onHomeClick);
-        $('#bigBuyNow').on('click',formManager.showForm);
+        if(Date.now() < 1648105199000) {
+            $('#bigBuyNow').on('click', formManager.showForm);
+        } else {
+            $('#bigBuyNow').remove();
+        }
         lastClicked = 'home';
     }
 

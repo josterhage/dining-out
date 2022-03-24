@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="/images/111th_MI_BDE_Patch.svg" rel="icon">
+
+    <link href="/css/global-styles.css" rel="stylesheet">
+    <link href="/css/dining-out-styles.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/b48c69fef3.js" crossorigin="anonymous"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script src="/js/text-navigation.js"></script>
+    <script src="/js/collapse.js"></script>
+    <script src="/js/maps.js"></script>
+    <script src="/js/slide-show.js"></script>
+    <script src="/js/sequence-navigation.js"></script>
+
+    <title>111th MI BDE Leadership Forum and Dining Out - 04.01.2022</title>
+</head>
+
+<body>
+<div class="darkener"></div>
+<header>
+    <div class="navbar">
+        <ul class="navbar collapsable">
+            <li>
+                <button class="btn btn-hollow" id="nav-home">Home</button>
+            </li>
+            <li>
+                <button class="btn btn-hollow" id="nav-sequence">Sequence of Events</button>
+            </li>
+            <li>
+                <button class="btn btn-hollow" id="nav-menu">Menu</button>
+            </li>
+            <li>
+                <button class="btn btn-hollow" id="nav-location">Location</button>
+            </li>
+            <li>
+                <button class="btn btn-hollow" id="nav-dress">Dress Code</button>
+            </li>
+        </ul>
+
+    </div>
+</header>
+
+
+<div class="body-wrapper">
+    <main>
+    </main>
+
+
+    <footer class="text-center" style="color:lightgray">
+        This is not an official DOD or Army website.<br/>
+        All payment information is processed by <a href="https://stripe.com">Stripe</a>.<br/>
+        Site design by James Osterhage.
+    </footer>
+
+    <div class="loader-frame hidden">
+        <div class="loader"></div>
+    </div>
+</div>
+
+<div id="getTicketsFormHolder">
+</div>
+
+<script th:inline="javascript">
+    let textNavigator = new TextNavigator();
+</script>
+</body>
+
+</html>
