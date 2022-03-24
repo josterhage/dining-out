@@ -16,11 +16,6 @@ public class HomeController {
         return System.currentTimeMillis() >= 1648105199000L ? "eventOver" : "index";
     }
 
-    @GetMapping("/oto")
-    public String special(){
-        return System.currentTimeMillis() >= 1648191599000L ? "eventOver" : "index";
-    }
-
     @GetMapping("/view/{view}")
     public String getView(@PathVariable String view) {
         return view;
