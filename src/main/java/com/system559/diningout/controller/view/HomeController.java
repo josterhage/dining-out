@@ -13,7 +13,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String homePage() {
-        return "index";
+        return System.currentTimeMillis() >= 1648105199000L ? "eventOver" : "index";
     }
 
     @GetMapping("/view/{view}")
