@@ -26,6 +26,7 @@ function TextNavigator() {
             $('#bigBuyNow').on('click', formManager.showForm);
         } else {
             $('#bigBuyNow').remove();
+            $('#slide-show').text("Ticket sales have ended.")
         }
         lastClicked = 'home';
     }
