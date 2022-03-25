@@ -1,6 +1,7 @@
 package com.system559.diningout.util;
 
 import com.google.zxing.WriterException;
+import com.system559.diningout.model.Ticket;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -22,147 +23,197 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
-
 public class TicketGenerator {
-    private final PDDocument document;
-    private final PDPage page;
-    private final List<TicketData> tickets;
-    private final PDPageContentStream contentStream;
     private final PDFont font;
+    private final PDImageXObject borderImage;
+    private final PDImageXObject phoenixImage;
+    private final PDImageXObject projectPhoenixQrImage;
+    private final PDDocument document;
 
-    private final int guestOffsetY = 396;
+    private final Color primaryColor = new Color(117,98,0);
+    private final String qrLink = "tel:520-732-0613";
 
-    public TicketGenerator() throws IOException {
+    private PDPage page;
+    private PDPageContentStream contentStream;
+
+    private int count = 0;
+    private final int ticketOffsetY = 396;
+
+    public TicketGenerator() throws IOException, WriterException {
         document = new PDDocument();
         page = new PDPage(PDRectangle.LETTER);
         document.addPage(page);
         contentStream = new PDPageContentStream(document, page);
         font = PDType0Font.load(document, new ClassPathResource("static/tickets/grenadier.regular.ttf").getFile());
-        tickets = new ArrayList<>();
-    }
 
-    public List<TicketData> getTickets() {
-        return tickets;
-    }
+        File borderImageFile = new ClassPathResource("static/tickets/button2-drk-gold.png").getFile();
+        borderImage = PDImageXObject.createFromFileByContent(borderImageFile, document);
 
-    public void buildPdf() throws IOException, WriterException {
-        drawBorder(0);
-        int bannerOffsetY = 702;
-        drawCenteredText("111th Military Intelligence Brigade Dining Out", 18, bannerOffsetY);
-        int dateOffsetY = 666;
-        drawCenteredText("April 1, 2022 at 5:00PM", 18, dateOffsetY);
-        int nameOffsetY = 630;
-        drawCenteredText(tickets.get(0).ticketHolderName, 28, nameOffsetY);
-        drawTicketNumber(0);
-        drawPhoenix(0);
-        drawQRCode(0);
-        if (tickets.size() == 2) {
-            drawBorder(1);
-            drawCenteredText("111th Military Intelligence Brigade Dining Out", 18, bannerOffsetY - guestOffsetY);
-            drawCenteredText("April 1, 2022 at 5:00PM", 18, dateOffsetY - guestOffsetY);
-            drawCenteredText(tickets.get(1).ticketHolderName, 28, nameOffsetY - guestOffsetY);
-            drawTicketNumber(1);
-            drawPhoenix(1);
-            drawQRCode(1);
-        }
-    }
-
-    private void drawPhoenix(int guestIndex) throws IOException {
-        float offsetX = 432;
-        float offsetY = 486;
         File phoenixImageFile = new ClassPathResource("static/tickets/111th_MI_BDE_Patch.png").getFile();
-        PDImageXObject image = PDImageXObject.createFromFileByContent(phoenixImageFile, document);
-        contentStream.drawImage(image, offsetX, offsetY - (guestIndex * guestOffsetY));
+        phoenixImage = PDImageXObject.createFromFileByContent(phoenixImageFile, document);
+
+        BufferedImage qrImage = QRGenerator.generateQRCodeImage(qrLink);
+        projectPhoenixQrImage = JPEGFactory.createFromImage(document, qrImage);
     }
 
-    private void drawQRCode(int guestIndex) throws WriterException, IOException {
-        float offsetX = 72;
-        float offsetY = 486;
-        String link = "https://111th-dining-out.system559.com/verify/" + tickets.get(guestIndex).ticketId;
-        BufferedImage qrImage = QRGenerator.generateQRCodeImage(link);
-        PDImageXObject image = JPEGFactory.createFromImage(document, qrImage);
-        contentStream.drawImage(image, offsetX, offsetY - (guestIndex * guestOffsetY));
-
-        PDAnnotationLink boxLink = new PDAnnotationLink();
-        PDActionURI action = new PDActionURI();
-        action.setURI(link);
-        boxLink.setAction(action);
-
-        PDRectangle position = new PDRectangle();
-        position.setLowerLeftX(offsetX);
-        position.setLowerLeftY(offsetY - (guestIndex * guestOffsetY));
-        position.setUpperRightX(offsetX + 126);
-        position.setUpperRightY((offsetY - (guestIndex * guestOffsetY) + 126));
-        boxLink.setRectangle(position);
-        page.getAnnotations().add(boxLink);
-    }
-
-    public void outputToStream(OutputStream stream) throws IOException {
-        contentStream.close();
-        document.save(stream);
-        document.save("src/main/resources/test.pdf");
-        document.close();
-    }
-
-    public InputStreamSource getInputStream() throws IOException {
-        contentStream.close();
+    public static InputStreamSource getInputStream(PDDocument document) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         document.save(byteArrayOutputStream);
         document.close();
         return new ByteArrayResource(byteArrayOutputStream.toByteArray());
     }
 
-    private void drawBorder(int guestIndex) throws IOException {
-        File borderImageFile = new ClassPathResource("static/tickets/button2-drk-gold.png").getFile();
-        PDImageXObject image = PDImageXObject.createFromFileByContent(borderImageFile, document);
-        int borderPositionY = 432;
-        int borderPositionX = 36;
-        contentStream.drawImage(image, borderPositionX, borderPositionY - (guestIndex * guestOffsetY));
+    public PDDocument createTickets(List<Ticket> tickets) throws IOException {
+        for (Ticket ticket : tickets) {
+            createTicket(ticket);
+        }
+        contentStream.close();
+        return document;
     }
 
-    private void drawCenteredText(String text, int size, int offsetY) throws IOException {
-        contentStream.setFont(font, size);
+    private void createTicket(Ticket ticket) throws IOException {
+        count++;
+        if (count > 1 && count % 2 != 0) {
+            contentStream.close();
+            page = new PDPage(PDRectangle.LETTER);
+            document.addPage(page);
+            contentStream = new PDPageContentStream(document, page);
+        }
+
+        TicketData ticketData = getTicketData(ticket);
+
+        drawStaticItems();
+        drawDynamicItems(ticketData);
+    }
+
+    private void drawStaticItems() throws IOException {
+        drawBorder();
+        drawHeadline();
+        drawDate();
+        drawPhoenix();
+        drawQRandLink();
+        drawPhoenixBlurb();
+    }
+
+    private void drawDynamicItems(TicketData ticketData) throws IOException {
+        drawTicketNumber(ticketData.ticketSerial);
+        drawTicketHolderName(ticketData.ticketHolderName);
+    }
+
+    private void drawBorder() throws IOException {
+        contentStream.drawImage(borderImage, 36, 36 + offsetY());
+    }
+
+    private void drawHeadline() throws IOException {
+        drawCenteredText("111th Military Intelligence Brigade Dining Out", 18, 306 + offsetY());
+    }
+
+    private void drawDate() throws IOException {
+        drawCenteredText("April 1, 2022 at 5:00PM",18,270 + offsetY());
+    }
+
+    private void drawPhoenix() throws IOException {
+        contentStream.drawImage(phoenixImage,432,90 + offsetY());
+    }
+
+    private void drawQRandLink() throws IOException {
+        contentStream.drawImage(projectPhoenixQrImage,72,90 + offsetY());
+        PDRectangle position = new PDRectangle();
+        position.setLowerLeftX(72);
+        position.setLowerLeftY(90 + offsetY());
+        position.setUpperRightX(198);
+        position.setUpperRightY(216 + offsetY());
+        PDAnnotationLink projectPhoenixQrLink = getProjectPhoenixQrLink();
+        projectPhoenixQrLink.setRectangle(position);
+        page.getAnnotations().add(projectPhoenixQrLink);
+    }
+
+    private void drawPhoenixBlurb() throws IOException {
+        contentStream.setFont(font,12);
+        contentStream.beginText();
+        contentStream.setNonStrokingColor(primaryColor);
+        contentStream.newLineAtOffset(72,72 + offsetY());
+        contentStream.showText("Need a ride? Scan the QR code or tap it on your phone to call Task Force Phoenix");
+        contentStream.endText();
+    }
+
+    private PDAnnotationLink getProjectPhoenixQrLink() {
+        PDAnnotationLink link = new PDAnnotationLink();
+        PDActionURI uri = new PDActionURI();
+        uri.setURI(qrLink);
+        link.setAction(uri);
+        return link;
+    }
+
+    private void drawTicketNumber(long ticketSerial) throws IOException {
+        contentStream.setFont(font,18);
+
+        contentStream.setNonStrokingColor(primaryColor);
+        contentStream.beginText();
+        drawN();
+        drawO();
+        drawNumber(ticketSerial);
+        contentStream.endText();
+        drawUnderline();
+    }
+
+    private void drawN() throws IOException {
+        contentStream.newLineAtOffset(486f,306 + offsetY());
+        contentStream.showText("N");
+    }
+
+    private void drawO() throws IOException{
+        contentStream.setFont(font,12);
+        contentStream.setTextRise(6f);
+        contentStream.showText("O ");
+    }
+
+    private void drawNumber(long ticketSerial) throws IOException {
+        contentStream.setFont(font, 18);
+        contentStream.setTextRise(0);
+        contentStream.showText(String.format("%03d",ticketSerial));
+    }
+
+    private void drawUnderline() throws IOException {
+        float offsetX = (font.getStringWidth("N") * 18 / 1000f) + 487f;
+        float width = font.getStringWidth("o") * 12 / 1000f;
+        contentStream.setLineWidth(1.0f);
+        contentStream.moveTo(offsetX,311 + offsetY());
+        contentStream.lineTo(offsetX + width, 311 + offsetY());
+        contentStream.stroke();
+    }
+
+    private void drawTicketHolderName(String ticketHolderName) throws IOException {
+        drawCenteredText(ticketHolderName,28,234 + offsetY());
+    }
+
+    private void drawCenteredText(String text, int fontSize, int offSetY) throws IOException {
+        contentStream.setFont(font,fontSize);
         contentStream.beginText();
 
         float pageWidth = page.getMediaBox().getWidth();
-        float textWidth = font.getStringWidth(text) * size / 1000F;
-        float offsetX = (pageWidth - textWidth) / 2F;
+        float textWidth = font.getStringWidth(text) * fontSize / 1000F;
+        float offsetX = (pageWidth - textWidth) /2F;
 
-        contentStream.newLineAtOffset(offsetX, offsetY);
-        contentStream.setNonStrokingColor(new Color(117, 98, 0));
-
+        contentStream.newLineAtOffset(offsetX,offSetY);
+        contentStream.setNonStrokingColor(primaryColor);
         contentStream.showText(text);
         contentStream.endText();
     }
 
-    private void drawTicketNumber(int guestIndex) throws IOException {
-        contentStream.setFont(font, 18);
+    private int offsetY() {
+        return ticketOffsetY * (count % 2);
+    }
 
-        float offsetX = (font.getStringWidth("N") * 18 / 1000f) + 487f;
-        float offsetY = 702f - (guestIndex * guestOffsetY);
-        float width = font.getStringWidth("o") * 12 / 1000f;
+    private TicketData getTicketData(Ticket ticket) {
+        return new TicketData(ticket.getTicketSerial(), getTicketHolderName(ticket));
+    }
 
-        contentStream.beginText();
-        contentStream.newLineAtOffset(486f, offsetY);
-        contentStream.setNonStrokingColor(new Color(117, 98, 0));
-        contentStream.showText("N");
-        contentStream.setFont(font, 12);
-        contentStream.setTextRise(6f);
-        contentStream.showText("O ");
-        contentStream.setFont(font, 18);
-        contentStream.setTextRise(0);
-        contentStream.showText(String.format("%03d", tickets.get(guestIndex).ticketSerial));
-        contentStream.endText();
-
-        contentStream.setStrokingColor(new Color(117, 98, 0));
-        contentStream.setLineWidth(1.0f);
-        contentStream.moveTo(offsetX, offsetY + 5f);
-        contentStream.lineTo(offsetX + width, offsetY + 5f);
-        contentStream.stroke();
+    public static String getTicketHolderName(Ticket ticket) {
+        String address = ticket.getGuest().getGrade().getName().equals("CIV") ? "" : ticket.getGuest().getGrade().getName() + " ";
+        return address + ticket.getGuest().getFirstName() + " " + ticket.getGuest().getLastName();
     }
 
     @AllArgsConstructor
@@ -170,7 +221,6 @@ public class TicketGenerator {
     public static class TicketData {
         private long ticketSerial;
         private String ticketHolderName;
-        private String ticketId;
 
         public TicketData() {
 

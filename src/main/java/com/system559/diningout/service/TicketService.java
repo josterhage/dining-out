@@ -10,9 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("ticketService")
@@ -71,5 +69,14 @@ public class TicketService {
 
     public static String getPersonFullName(Guest guest) {
         return getPersonAddress(guest) + " " + guest.getFirstName() + " " + guest.getLastName();
+    }
+
+    public Set<String> getUniqueEmailAddresses() {
+        List<Ticket> tickets = ticketRepository.findAll();
+        Set<String> addresses = new HashSet<>();
+        for(Ticket ticket : tickets) {
+            addresses.add(ticket.getGuest().getEmail());
+        }
+        return addresses;
     }
 }
